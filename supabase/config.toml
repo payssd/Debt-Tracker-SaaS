@@ -9,3 +9,7 @@ verify_jwt = false
 
 [functions.paystack-verify]
 verify_jwt = false
+
+# Automatic reminders function (triggered by cron)
+[functions.process-reminders]
+verify_jwt = false
