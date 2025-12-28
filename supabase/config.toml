@@ -1,0 +1,11 @@
+project_id = "ldwrsrrhfanhvvjmtrjn"
+
+# Paystack payment functions
+[functions.paystack-initialize]
+verify_jwt = false
+
+[functions.paystack-webhook]
+verify_jwt = false
+
+[functions.paystack-verify]
+verify_jwt = false
