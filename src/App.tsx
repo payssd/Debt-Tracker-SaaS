@@ -20,6 +20,7 @@ import Invoices from "./pages/Invoices";
 import AddInvoice from "./pages/AddInvoice";
 import Statements from "./pages/Statements";
 import Reminders from "./pages/Reminders";
+import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import Subscription from "./pages/Subscription";
 import SubscriptionCallback from "./pages/SubscriptionCallback";
@@ -56,6 +57,7 @@ const App = () => (
                   <Route path="/invoices/new" element={<ProtectedRoute><SubscriptionGuard><AddInvoice /></SubscriptionGuard></ProtectedRoute>} />
                   <Route path="/statements" element={<ProtectedRoute><SubscriptionGuard><Statements /></SubscriptionGuard></ProtectedRoute>} />
                   <Route path="/reminders" element={<ProtectedRoute><SubscriptionGuard><Reminders /></SubscriptionGuard></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
