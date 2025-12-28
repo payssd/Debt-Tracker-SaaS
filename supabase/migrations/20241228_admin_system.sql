@@ -168,9 +168,10 @@ BEGIN
   
   -- Subscription stats
   SELECT 
-    COUNT(*) FILTER (WHERE status = 'trialing') INTO v_active_trials,
-    COUNT(*) FILTER (WHERE status = 'active') INTO v_active_subs,
-    COUNT(*) FILTER (WHERE status IN ('expired', 'canceled')) INTO v_churned
+    COUNT(*) FILTER (WHERE status = 'trialing'),
+    COUNT(*) FILTER (WHERE status = 'active'),
+    COUNT(*) FILTER (WHERE status IN ('expired', 'canceled'))
+  INTO v_active_trials, v_active_subs, v_churned
   FROM user_subscriptions;
   
   -- Customer and invoice stats
