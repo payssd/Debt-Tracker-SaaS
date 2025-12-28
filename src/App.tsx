@@ -21,6 +21,7 @@ import AddInvoice from "./pages/AddInvoice";
 import Statements from "./pages/Statements";
 import Reminders from "./pages/Reminders";
 import Settings from "./pages/Settings";
+import Funnel from "./pages/Funnel";
 import Pricing from "./pages/Pricing";
 import Subscription from "./pages/Subscription";
 import SubscriptionCallback from "./pages/SubscriptionCallback";
@@ -58,6 +59,7 @@ const App = () => (
                   <Route path="/statements" element={<ProtectedRoute><SubscriptionGuard><Statements /></SubscriptionGuard></ProtectedRoute>} />
                   <Route path="/reminders" element={<ProtectedRoute><SubscriptionGuard><Reminders /></SubscriptionGuard></ProtectedRoute>} />
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                  <Route path="/funnel" element={<ProtectedRoute><Funnel /></ProtectedRoute>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
