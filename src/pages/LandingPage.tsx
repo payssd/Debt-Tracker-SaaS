@@ -20,7 +20,12 @@ import {
   Quote,
   Clock,
   AlertTriangle,
-  FileSearch
+  FileSearch,
+  Play,
+  UserPlus,
+  PlusCircle,
+  Send,
+  Banknote
 } from "lucide-react";
 
 const LandingPage = () => {
@@ -178,6 +183,12 @@ const LandingPage = () => {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
+                <a href="#how-it-works">
+                  <Button size="lg" variant="outline" className="text-lg px-8 py-6 font-semibold">
+                    <Play className="mr-2 h-5 w-5" />
+                    How It Works
+                  </Button>
+                </a>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={0.3}>
@@ -186,6 +197,117 @@ const LandingPage = () => {
               </p>
             </ScrollReveal>
           </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-16 md:py-24 bg-gradient-to-b from-accent/5 to-background">
+        <div className="container">
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-semibold mb-4">
+                SIMPLE 4-STEP PROCESS
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Get Paid in <span className="text-accent">4 Easy Steps</span>
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                From signup to getting paid — it takes less than 5 minutes
+              </p>
+            </div>
+          </ScrollReveal>
+
+          {/* Steps Container */}
+          <div className="relative max-w-5xl mx-auto">
+            {/* Connection Line (Desktop) */}
+            <div className="hidden lg:block absolute top-24 left-[12%] right-[12%] h-1 bg-gradient-to-r from-accent/20 via-accent to-accent/20 rounded-full" />
+            
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {/* Step 1 */}
+              <ScrollReveal delay={0} direction="up">
+                <div className="relative text-center group">
+                  <div className="relative mx-auto mb-6">
+                    <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center shadow-lg shadow-accent/25 group-hover:scale-110 transition-transform duration-300">
+                      <UserPlus className="h-10 w-10 text-white" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-md">
+                      1
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Sign Up Free</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Create your account in 30 seconds. No credit card needed.
+                  </p>
+                </div>
+              </ScrollReveal>
+
+              {/* Step 2 */}
+              <ScrollReveal delay={0.1} direction="up">
+                <div className="relative text-center group">
+                  <div className="relative mx-auto mb-6">
+                    <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
+                      <PlusCircle className="h-10 w-10 text-white" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-md">
+                      2
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Add Invoices</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Enter your customer details and unpaid invoices quickly.
+                  </p>
+                </div>
+              </ScrollReveal>
+
+              {/* Step 3 */}
+              <ScrollReveal delay={0.2} direction="up">
+                <div className="relative text-center group">
+                  <div className="relative mx-auto mb-6">
+                    <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg shadow-green-500/25 group-hover:scale-110 transition-transform duration-300">
+                      <Send className="h-10 w-10 text-white" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-md">
+                      3
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Send Reminders</h3>
+                  <p className="text-muted-foreground text-sm">
+                    One-click WhatsApp reminders your customers actually read.
+                  </p>
+                </div>
+              </ScrollReveal>
+
+              {/* Step 4 */}
+              <ScrollReveal delay={0.3} direction="up">
+                <div className="relative text-center group">
+                  <div className="relative mx-auto mb-6">
+                    <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/25 group-hover:scale-110 transition-transform duration-300">
+                      <Banknote className="h-10 w-10 text-white" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-md">
+                      4
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Get Paid! 💰</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Watch your payments come in faster than ever before.
+                  </p>
+                </div>
+              </ScrollReveal>
+            </div>
+          </div>
+
+          {/* Bottom CTA */}
+          <ScrollReveal delay={0.4}>
+            <div className="text-center mt-12">
+              <Link to="/dashboard">
+                <Button size="lg" className="text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-xl transition-all">
+                  Try It Free — Takes 30 Seconds
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
