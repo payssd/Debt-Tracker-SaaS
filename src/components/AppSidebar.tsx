@@ -78,12 +78,15 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border p-4">
         <Link to="/dashboard" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg gradient-primary">
-            <FileText className="h-5 w-5 text-primary-foreground" />
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl gradient-primary shadow-lg hover:shadow-xl transition-shadow">
+            <svg viewBox="0 0 32 32" className="h-6 w-6">
+              <path d="M8 8h8c4.4 0 8 3.6 8 8s-3.6 8-8 8H8V8zm4 4v8h4c2.2 0 4-1.8 4-4s-1.8-4-4-4h-4z" fill="white" fillOpacity="0.95"/>
+            </svg>
+            <div className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-accent border-2 border-sidebar-background" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col">
-              <span className="text-lg font-semibold tracking-tight">Debt Tracker</span>
+              <span className="text-lg font-semibold tracking-tight text-gradient">Debt Tracker</span>
               <span className="text-xs text-muted-foreground">Track & Collect</span>
             </div>
           )}

@@ -7,8 +7,24 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import { Eye, EyeOff, Gift, Loader2, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Gift, Loader2, ArrowLeft, Sparkles } from 'lucide-react';
 import { z } from 'zod';
+
+const Logo = () => (
+  <div className="flex items-center justify-center gap-3 mb-2">
+    <div className="relative">
+      <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg animate-pulse-glow">
+        <svg viewBox="0 0 32 32" className="w-7 h-7">
+          <path d="M8 8h8c4.4 0 8 3.6 8 8s-3.6 8-8 8H8V8zm4 4v8h4c2.2 0 4-1.8 4-4s-1.8-4-4-4h-4z" fill="white" fillOpacity="0.95"/>
+        </svg>
+      </div>
+      <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent flex items-center justify-center">
+        <Sparkles className="w-2.5 h-2.5 text-white" />
+      </div>
+    </div>
+    <span className="text-2xl font-bold text-gradient">Debt Tracker</span>
+  </div>
+);
 
 const authSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -206,9 +222,16 @@ const Auth: React.FC = () => {
 
   if (mode === 'forgot') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-3xl" />
+        
+        <Card className="w-full max-w-md relative z-10 glass border-white/20 shadow-xl">
           <CardHeader className="text-center">
+            <Logo />
             <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
             <CardDescription>Enter your email to receive a reset link</CardDescription>
           </CardHeader>
@@ -249,9 +272,16 @@ const Auth: React.FC = () => {
 
   if (mode === 'reset') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-3xl" />
+        
+        <Card className="w-full max-w-md relative z-10 glass border-white/20 shadow-xl">
           <CardHeader className="text-center">
+            <Logo />
             <CardTitle className="text-2xl font-bold">Set New Password</CardTitle>
             <CardDescription>Enter your new password below</CardDescription>
           </CardHeader>
@@ -302,11 +332,17 @@ const Auth: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute inset-0 gradient-hero" />
+      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-slow" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-3xl" />
+      
+      <Card className="w-full max-w-md relative z-10 glass border-white/20 shadow-xl card-3d">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Debt Tracker</CardTitle>
-          <CardDescription>Manage your invoices and track payments</CardDescription>
+          <Logo />
+          <CardDescription className="text-base">Manage your invoices and track payments</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={referralCodeParam ? 'signup' : 'signin'}>

@@ -9,109 +9,141 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    /* ========================================
+       BRAND COLORS - Debt Tracker
+       Primary: Deep Blue (Trust & Professional)
+       Accent: Emerald Green (Money & Success)
+       Secondary: Purple (Premium Feel)
+    ======================================== */
+    
+    --background: 220 20% 97%;
+    --foreground: 224 71% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 224 71% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 224 71% 4%;
 
-    --primary: 222 47% 20%;
+    /* Primary - Deep Blue */
+    --primary: 221 83% 53%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 222 47% 20%;
+    /* Secondary - Soft Purple */
+    --secondary: 262 83% 58%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 210 20% 94%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 168 76% 36%;
+    /* Accent - Emerald Green (Money/Success) */
+    --accent: 160 84% 39%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 47% 20%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 221 83% 53%;
 
     --radius: 0.75rem;
 
     /* Custom status colors */
-    --status-paid: 152 69% 40%;
-    --status-paid-bg: 152 69% 95%;
+    --status-paid: 160 84% 39%;
+    --status-paid-bg: 160 84% 95%;
     --status-pending: 38 92% 50%;
     --status-pending-bg: 38 92% 95%;
     --status-overdue: 0 84% 60%;
     --status-overdue-bg: 0 84% 96%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(222 47% 20%), hsl(222 47% 30%));
-    --gradient-accent: linear-gradient(135deg, hsl(168 76% 36%), hsl(168 76% 46%));
-    --gradient-hero: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(210 30% 95%) 100%);
+    /* Brand Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(262 83% 58%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 84% 49%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(221 83% 53% / 0.05) 0%, hsl(262 83% 58% / 0.05) 50%, hsl(160 84% 39% / 0.05) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(220 20% 98%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.9) 0%, hsl(0 0% 100% / 0.7) 100%);
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(222 47% 11% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(222 47% 11% / 0.1), 0 2px 4px -2px hsl(222 47% 11% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(222 47% 11% / 0.1), 0 4px 6px -4px hsl(222 47% 11% / 0.1);
-    --shadow-card: 0 1px 3px 0 hsl(222 47% 11% / 0.04), 0 1px 2px -1px hsl(222 47% 11% / 0.04);
+    /* Enhanced Shadows with brand colors */
+    --shadow-sm: 0 1px 2px 0 hsl(221 83% 53% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(221 83% 53% / 0.08), 0 2px 4px -2px hsl(221 83% 53% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(221 83% 53% / 0.1), 0 4px 6px -4px hsl(221 83% 53% / 0.08);
+    --shadow-xl: 0 20px 25px -5px hsl(221 83% 53% / 0.1), 0 8px 10px -6px hsl(221 83% 53% / 0.08);
+    --shadow-card: 0 1px 3px 0 hsl(221 83% 53% / 0.04), 0 1px 2px -1px hsl(221 83% 53% / 0.04);
+    --shadow-glow: 0 0 20px hsl(221 83% 53% / 0.3);
+    --shadow-glow-accent: 0 0 20px hsl(160 84% 39% / 0.3);
+    --shadow-3d: 0 10px 30px -10px hsl(221 83% 53% / 0.2), 0 20px 40px -20px hsl(262 83% 58% / 0.15);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 224 71% 4%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 221 83% 96%;
+    --sidebar-accent-foreground: 221 83% 53%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 221 83% 53%;
   }
 
   .dark {
-    --background: 222 47% 8%;
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 11%;
+    --card: 224 71% 8%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 11%;
+    --popover: 224 71% 8%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 168 76% 42%;
-    --primary-foreground: 222 47% 11%;
+    /* Primary - Bright Blue in dark mode */
+    --primary: 217 91% 60%;
+    --primary-foreground: 224 71% 4%;
 
-    --secondary: 222 47% 15%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary - Bright Purple */
+    --secondary: 262 83% 68%;
+    --secondary-foreground: 224 71% 4%;
 
-    --muted: 222 47% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 224 71% 12%;
+    --muted-foreground: 220 9% 65%;
 
-    --accent: 168 76% 42%;
-    --accent-foreground: 222 47% 11%;
+    /* Accent - Bright Emerald */
+    --accent: 160 84% 45%;
+    --accent-foreground: 224 71% 4%;
 
-    --destructive: 0 63% 31%;
+    --destructive: 0 63% 45%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 222 47% 20%;
-    --input: 222 47% 20%;
-    --ring: 168 76% 42%;
+    --border: 224 71% 15%;
+    --input: 224 71% 15%;
+    --ring: 217 91% 60%;
 
-    --status-paid: 152 69% 45%;
-    --status-paid-bg: 152 69% 15%;
+    --status-paid: 160 84% 45%;
+    --status-paid-bg: 160 84% 15%;
     --status-pending: 38 92% 55%;
     --status-pending-bg: 38 92% 15%;
     --status-overdue: 0 70% 50%;
     --status-overdue-bg: 0 70% 15%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(262 83% 68%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(160 84% 45%) 0%, hsl(160 84% 55%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60% / 0.1) 0%, hsl(262 83% 68% / 0.1) 50%, hsl(160 84% 45% / 0.1) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(224 71% 10%) 0%, hsl(224 71% 8%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(224 71% 12% / 0.9) 0%, hsl(224 71% 8% / 0.7) 100%);
+
+    /* Dark shadows with glow */
+    --shadow-glow: 0 0 30px hsl(217 91% 60% / 0.4);
+    --shadow-glow-accent: 0 0 30px hsl(160 84% 45% / 0.4);
+    --shadow-3d: 0 10px 30px -10px hsl(0 0% 0% / 0.5), 0 20px 40px -20px hsl(217 91% 60% / 0.2);
+
+    --sidebar-background: 224 71% 6%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 224 71% 4%;
+    --sidebar-accent: 224 71% 12%;
+    --sidebar-accent-foreground: 217 91% 60%;
+    --sidebar-border: 224 71% 12%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -143,16 +175,167 @@
     @apply bg-[hsl(var(--status-overdue-bg))] text-[hsl(var(--status-overdue))] border-[hsl(var(--status-overdue)/0.3)];
   }
 
+  /* ========================================
+     3D CARD EFFECTS & HOVER ANIMATIONS
+  ======================================== */
+  
   .card-hover {
-    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+    @apply transition-all duration-300 ease-out;
+    transform-style: preserve-3d;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-8px) rotateX(2deg);
+    box-shadow: var(--shadow-3d);
   }
 
+  .card-3d {
+    @apply relative overflow-hidden rounded-2xl;
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .card-3d:hover {
+    transform: translateY(-12px) rotateX(5deg) rotateY(-2deg);
+    box-shadow: var(--shadow-3d);
+  }
+
+  .card-3d::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: var(--gradient-hero);
+    z-index: -1;
+  }
+
+  .card-3d:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Glassmorphism Effect */
+  .glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-strong {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  /* Gradient Backgrounds */
   .gradient-primary {
     background: var(--gradient-primary);
   }
 
   .gradient-accent {
     background: var(--gradient-accent);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  /* Glow Effects */
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glow-accent {
+    box-shadow: var(--shadow-glow-accent);
+  }
+
+  .glow-hover:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glow-accent-hover:hover {
+    box-shadow: var(--shadow-glow-accent);
+  }
+
+  /* Button 3D Effect */
+  .btn-3d {
+    @apply relative overflow-hidden;
+    transform-style: preserve-3d;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .btn-3d:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+  }
+
+  .btn-3d:active {
+    transform: translateY(-2px) scale(0.98);
+  }
+
+  /* Floating Animation */
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .float-delayed {
+    animation: float 3s ease-in-out infinite 0.5s;
+  }
+
+  .float-slow {
+    animation: float 5s ease-in-out infinite;
+  }
+
+  /* Pulse Glow Animation */
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Shimmer Effect */
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--primary) / 0.1),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  /* Text Gradient */
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-accent {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Border Gradient */
+  .border-gradient {
+    @apply relative;
+    background: var(--gradient-primary);
+    padding: 2px;
+    border-radius: var(--radius);
+  }
+
+  .border-gradient > * {
+    @apply bg-background rounded-lg;
   }
 
   /* Mobile App-like Utilities */
@@ -188,6 +371,68 @@
     user-select: none;
     -webkit-touch-callout: none;
   }
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+======================================== */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes scale-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Animated gradient background */
+.animated-gradient {
+  background: linear-gradient(
+    -45deg,
+    hsl(var(--primary)),
+    hsl(var(--secondary)),
+    hsl(var(--accent)),
+    hsl(var(--primary))
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
 }
 
 /* Global mobile app styles */
