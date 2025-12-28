@@ -12,7 +12,8 @@ import {
   Settings,
   LogOut,
   Crown,
-  Zap
+  Zap,
+  Shield
 } from 'lucide-react';
 import {
   Sidebar,
@@ -48,6 +49,7 @@ const navItems = [
   { href: '/funnel', label: 'Trial Funnel', icon: Zap },
   { href: '/referrals', label: 'Referrals', icon: Gift },
   { href: '/subscription', label: 'Subscription', icon: Crown },
+  { href: '/admin', label: 'Admin', icon: Shield },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
