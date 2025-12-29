@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
+import FunnelNotification from '@/components/FunnelNotification';
 import { StatCard } from '@/components/StatCard';
 import { CustomerCard } from '@/components/CustomerCard';
 import { Button } from '@/components/ui/button';
@@ -96,6 +97,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
+      <FunnelNotification />
       <div className="space-y-6 md:space-y-8 animate-fade-in">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
