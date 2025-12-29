@@ -146,6 +146,20 @@ export function AppSidebar() {
 
           <SidebarSeparator className="my-1" />
 
+          {/* Logout Button - Always visible, especially for mobile */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip="Log out"
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Log out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarSeparator className="my-1" />
+
           {/* User Profile */}
           <SidebarMenuItem>
             <DropdownMenu>
