@@ -23,6 +23,7 @@ import Reminders from "./pages/Reminders";
 import Settings from "./pages/Settings";
 import Funnel from "./pages/Funnel";
 import Admin from "./pages/Admin";
+import AdminAuth from "./pages/AdminAuth";
 import Pricing from "./pages/Pricing";
 import Subscription from "./pages/Subscription";
 import SubscriptionCallback from "./pages/SubscriptionCallback";
@@ -61,6 +62,7 @@ const App = () => (
                   <Route path="/reminders" element={<ProtectedRoute><SubscriptionGuard><Reminders /></SubscriptionGuard></ProtectedRoute>} />
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   <Route path="/funnel" element={<ProtectedRoute><Funnel /></ProtectedRoute>} />
+                  <Route path="/admin/login" element={<AdminAuth />} />
                   <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="/about" element={<About />} />
