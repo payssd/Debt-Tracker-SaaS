@@ -474,18 +474,46 @@ const LandingPage = () => {
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Simple, transparent pricing
               </h2>
-              <p className="text-muted-foreground text-lg">Perfect for landlords & shop owners</p>
+              <p className="text-muted-foreground text-lg">Perfect for landlords & shop owners — unlock all features</p>
             </div>
           </ScrollReveal>
-          <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
+          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
             <ScrollReveal delay={0.1} direction="right">
               <Card className="border-border bg-card card-hover h-full">
-                <CardContent className="pt-8 text-center">
-                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">Monthly</h3>
-                  <div className="text-4xl font-bold text-foreground mb-2">
-                    KES 1,000<span className="text-lg font-normal text-muted-foreground">/month</span>
+                <CardContent className="pt-8">
+                  <div className="text-center mb-6">
+                    <h3 className="text-lg font-semibold text-muted-foreground mb-2">Monthly</h3>
+                    <div className="text-4xl font-bold text-foreground mb-2">
+                      KES 1,000<span className="text-lg font-normal text-muted-foreground">/month</span>
+                    </div>
+                    <p className="text-muted-foreground">Flexible monthly billing</p>
                   </div>
-                  <p className="text-muted-foreground mb-6">Track up to 10 tenants/customers</p>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Unlimited tenants/customers</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Unlimited invoices & statements</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Auto overdue tracking & alerts</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>WhatsApp reminder templates</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Professional PDF statements</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Dashboard analytics</span>
+                    </div>
+                  </div>
                   <Link to="/pricing">
                     <Button className="w-full" variant="outline">Get Started</Button>
                   </Link>
@@ -497,12 +525,44 @@ const LandingPage = () => {
                 <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-bl-lg">
                   SAVE 2 MONTHS
                 </div>
-                <CardContent className="pt-8 text-center">
-                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">Yearly</h3>
-                  <div className="text-4xl font-bold text-foreground mb-2">
-                    KES 10,000<span className="text-lg font-normal text-muted-foreground">/year</span>
+                <CardContent className="pt-8">
+                  <div className="text-center mb-6">
+                    <h3 className="text-lg font-semibold text-muted-foreground mb-2">Yearly</h3>
+                    <div className="text-4xl font-bold text-foreground mb-2">
+                      KES 10,000<span className="text-lg font-normal text-muted-foreground">/year</span>
+                    </div>
+                    <p className="text-muted-foreground">Save KES 2,000 yearly</p>
                   </div>
-                  <p className="text-muted-foreground mb-6">Save 2 months, track up to 10 tenants/customers</p>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Unlimited tenants/customers</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Unlimited invoices & statements</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Auto overdue tracking & alerts</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>WhatsApp reminder templates</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Professional PDF statements</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span>Dashboard analytics</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                      <span className="font-medium text-accent">Priority support</span>
+                    </div>
+                  </div>
                   <Link to="/pricing">
                     <Button className="w-full">Get Started</Button>
                   </Link>
@@ -512,7 +572,7 @@ const LandingPage = () => {
           </div>
           <ScrollReveal delay={0.3}>
             <p className="text-center mt-8 text-accent font-medium">
-              ✨ Free 7-day trial — start without risk
+              ✨ Free 7-day trial — full access to all features, no credit card required
             </p>
           </ScrollReveal>
         </div>
