@@ -18,7 +18,7 @@ const About = () => {
     {
       icon: Zap,
       title: "Speed Matters",
-      description: "Your time is valuable. That's why everything in DebtFlow can be done in seconds, not hours."
+      description: "Your time is valuable. That's why everything in Debt Tracker can be done in seconds, not hours."
     }
   ];
 

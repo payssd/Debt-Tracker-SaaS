@@ -56,8 +56,8 @@ const Contact = () => {
                       <p className="text-muted-foreground text-sm mb-2">
                         We'll respond within 24 hours
                       </p>
-                      <a href="mailto:support@debtflow.app" className="text-accent hover:underline">
-                        support@debtflow.app
+                      <a href="mailto:support@debttracker.app" className="text-accent hover:underline">
+                        support@debttracker.app
                       </a>
                     </div>
                   </div>

@@ -24,9 +24,9 @@ export interface Referral {
   dateCreated: Date;
 }
 
-const CURRENT_USER_KEY = 'debtflow_current_user';
-const USERS_KEY = 'debtflow_users';
-const REFERRALS_KEY = 'debtflow_referrals';
+const CURRENT_USER_KEY = 'debttracker_current_user';
+const USERS_KEY = 'debttracker_users';
+const REFERRALS_KEY = 'debttracker_referrals';
 
 // Generate a unique referral code
 export function generateReferralCode(): string {

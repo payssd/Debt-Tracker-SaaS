@@ -109,8 +109,8 @@ const TermsOfService = () => {
             <h2 className="text-xl font-semibold text-foreground mb-4">8. Contact Us</h2>
             <p className="text-muted-foreground">
               If you have questions about these Terms of Service, please contact us at{" "}
-              <a href="mailto:legal@debtflow.app" className="text-accent hover:underline">
-                legal@debtflow.app
+              <a href="mailto:legal@debttracker.app" className="text-accent hover:underline">
+                legal@debttracker.app
               </a>
             </p>
           </section>

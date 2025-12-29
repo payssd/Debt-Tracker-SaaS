@@ -93,8 +93,8 @@ const PrivacyPolicy = () => {
             <h2 className="text-xl font-semibold text-foreground mb-4">6. Contact Us</h2>
             <p className="text-muted-foreground">
               If you have questions about this Privacy Policy, please contact us at{" "}
-              <a href="mailto:privacy@debtflow.app" className="text-accent hover:underline">
-                privacy@debtflow.app
+              <a href="mailto:privacy@debttracker.app" className="text-accent hover:underline">
+                privacy@debttracker.app
               </a>
             </p>
           </section>
