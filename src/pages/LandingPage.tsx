@@ -33,17 +33,17 @@ const LandingPage = () => {
     {
       icon: LayoutDashboard,
       title: "Dashboard",
-      description: "See all unpaid invoices in seconds"
+      description: "See all overdue rent and shop debts in seconds"
     },
     {
       icon: Users,
-      title: "Customer Management",
+      title: "Tenant / Customer Management",
       description: "One place for all contacts"
     },
     {
       icon: FileText,
       title: "Statements",
-      description: "PDF-ready, professional, and easy to send"
+      description: "PDF-ready, professional, easy to send"
     },
     {
       icon: MessageCircle,
@@ -58,35 +58,36 @@ const LandingPage = () => {
   ];
 
   const painPoints = [
-    { icon: Clock, text: "Customers delay payments?" },
-    { icon: FileSearch, text: "Lost invoices and messy records?" },
-    { icon: AlertTriangle, text: "Manual WhatsApp reminders taking hours?" }
+    { icon: Clock, text: "Tenants delay rent payments?" },
+    { icon: FileSearch, text: "Customers skip shop payments?" },
+    { icon: AlertTriangle, text: "Messy records and lost payment info?" },
+    { icon: MessageCircle, text: "Manual WhatsApp reminders taking hours?" }
   ];
 
   const solutionItems = [
-    "Track outstanding invoices in one dashboard",
-    "Generate professional PDF statements instantly",
-    "Auto-generate WhatsApp reminders your customers actually read",
+    "Track outstanding payments in one dashboard",
+    "Generate professional PDF rent or shop statements instantly",
+    "Auto-generate WhatsApp reminders your tenants/customers actually read",
     "Know who owes you, and when, at a glance"
   ];
 
   const testimonials = [
     {
-      quote: "I started using this tool last month — I've already collected 30% more payments on time.",
+      quote: "I started using Debt Tracker last month — I've already collected 30% more rent on time.",
       name: "Mary",
-      role: "Hardware Supplier, Nairobi",
+      role: "Landlord, Nairobi",
       initial: "M"
     },
     {
-      quote: "Before Debt Tracker, I spent hours every week chasing payments. Now it takes me 10 minutes. My customers actually pay faster because the reminders are professional.",
+      quote: "Before Debt Tracker, I spent hours every week chasing shop payments. Now it takes me 10 minutes. Customers actually pay faster because reminders are professional.",
       name: "James Ochieng",
-      role: "Wholesale Distributor, Kisumu",
+      role: "Shop Owner, Kisumu",
       initial: "J"
     },
     {
-      quote: "The PDF statements look so professional that my customers take them seriously. I've reduced my overdue invoices by 50% in just two months.",
+      quote: "The PDF statements look so professional that tenants take them seriously. I've reduced my overdue rent by 50% in just two months.",
       name: "Grace Wanjiku",
-      role: "Food Supplier, Mombasa",
+      role: "Property Manager, Mombasa",
       initial: "G"
     }
   ];
@@ -166,13 +167,13 @@ const LandingPage = () => {
           <div className="mx-auto max-w-4xl text-center">
             <ScrollReveal>
               <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-                Stop Chasing Late Payments — 
+                Stop Chasing Late Rent & Shop Payments — 
                 <span className="text-accent"> Track, Remind, and Get Paid on Time!</span>
               </h1>
             </ScrollReveal>
             <ScrollReveal delay={0.1}>
               <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                The simplest tool for small suppliers to track unpaid invoices, generate statements, and send WhatsApp reminders — in just 30 seconds.
+                The simplest tool for Kenyan landlords and shop owners to track unpaid rent and customer debts, generate statements, and send WhatsApp reminders — in just 30 seconds.
               </p>
             </ScrollReveal>
             <ScrollReveal delay={0.2}>
@@ -334,7 +335,7 @@ const LandingPage = () => {
             </div>
             <ScrollReveal delay={0.3}>
               <p className="mt-10 text-lg text-muted-foreground">
-                You're not alone. Every small supplier struggles with late payments — <span className="font-semibold text-destructive">and it kills cash flow.</span>
+                You're not alone. Every landlord and shop owner struggles with late payments — <span className="font-semibold text-destructive">and it kills cash flow.</span>
               </p>
             </ScrollReveal>
           </div>
@@ -362,7 +363,7 @@ const LandingPage = () => {
             </div>
             <ScrollReveal delay={0.4}>
               <p className="mt-10 text-lg text-muted-foreground font-medium">
-                Stop wasting time chasing payments. <span className="text-accent">Focus on growing your business instead.</span>
+                Stop wasting time chasing payments. <span className="text-accent">Focus on growing your property or shop business instead.</span>
               </p>
             </ScrollReveal>
           </div>
@@ -375,7 +376,7 @@ const LandingPage = () => {
           <ScrollReveal>
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                Everything you need to get paid
+                Everything you need to get paid on time
               </h2>
             </div>
           </ScrollReveal>
@@ -405,7 +406,7 @@ const LandingPage = () => {
           <ScrollReveal>
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                Trusted by suppliers across Kenya
+                Trusted by landlords & shop owners across Kenya
               </h2>
             </div>
           </ScrollReveal>
@@ -473,7 +474,7 @@ const LandingPage = () => {
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Simple, transparent pricing
               </h2>
-              <p className="text-muted-foreground text-lg">Perfect for small suppliers</p>
+              <p className="text-muted-foreground text-lg">Perfect for landlords & shop owners</p>
             </div>
           </ScrollReveal>
           <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
@@ -484,7 +485,7 @@ const LandingPage = () => {
                   <div className="text-4xl font-bold text-foreground mb-2">
                     KES 1,000<span className="text-lg font-normal text-muted-foreground">/month</span>
                   </div>
-                  <p className="text-muted-foreground mb-6">Perfect for small suppliers</p>
+                  <p className="text-muted-foreground mb-6">Track up to 10 tenants/customers</p>
                   <Link to="/pricing">
                     <Button className="w-full" variant="outline">Get Started</Button>
                   </Link>
@@ -501,7 +502,7 @@ const LandingPage = () => {
                   <div className="text-4xl font-bold text-foreground mb-2">
                     KES 10,000<span className="text-lg font-normal text-muted-foreground">/year</span>
                   </div>
-                  <p className="text-muted-foreground mb-6">Save 2 months</p>
+                  <p className="text-muted-foreground mb-6">Save 2 months, track up to 10 tenants/customers</p>
                   <Link to="/pricing">
                     <Button className="w-full">Get Started</Button>
                   </Link>
@@ -523,7 +524,7 @@ const LandingPage = () => {
           <ScrollReveal>
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Don't let unpaid invoices hold your business back
+                Don't let unpaid rent or shop payments hold your business back
               </h2>
               <p className="text-lg opacity-90 mb-8">
                 Start today and see results in your first week!
@@ -553,7 +554,7 @@ const LandingPage = () => {
                   <span className="font-bold text-lg text-foreground">Debt Tracker</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  The simplest tool for small suppliers to track invoices and get paid on time.
+                  The simplest tool for Kenyan landlords and shop owners to track payments and get paid on time.
                 </p>
               </div>
 
@@ -598,7 +599,7 @@ const LandingPage = () => {
               </span>
               <span className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-accent" />
-                100% local supplier-friendly
+                100% local landlord/shop-owner-friendly
               </span>
             </div>
 
