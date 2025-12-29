@@ -216,10 +216,27 @@ Kindly advise on payment. Thank you for your business!`;
       });
     }
 
-    // Clean phone number for WhatsApp
-    const phone = selectedCustomer.contact.replace(/[^0-9]/g, '');
+    // Clean phone number for WhatsApp - remove all non-digits
+    let phone = selectedCustomer.contact.replace(/[^0-9+]/g, '');
+    
+    // Remove leading + if present, wa.me doesn't need it
+    phone = phone.replace(/^\+/, '');
+    
+    // If number starts with 0, assume Nigeria and replace with 234
+    if (phone.startsWith('0')) {
+      phone = '234' + phone.substring(1);
+    }
+    
+    // If number doesn't start with country code, assume Nigeria (234)
+    if (phone.length <= 10) {
+      phone = '234' + phone;
+    }
+    
     const encodedMessage = encodeURIComponent(reminderMessage);
-    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+    const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+    
+    // Use location.href for better mobile compatibility
+    window.location.href = whatsappUrl;
   };
 
   const handleCustomerChange = (customerId: string) => {
