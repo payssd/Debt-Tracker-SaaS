@@ -82,6 +82,21 @@ serve(async (req: Request) => {
       throw new Error("Failed to create profile");
     }
 
+    // Create user_subscriptions record with trial_start
+    const { error: subscriptionError } = await supabaseAdmin
+      .from('user_subscriptions')
+      .insert({
+        user_id: userId,
+        status: 'trialing',
+        trial_start: now.toISOString(),
+        trial_end: trialEnd.toISOString(),
+      });
+
+    if (subscriptionError) {
+      console.error("Subscription creation error:", subscriptionError);
+      // Don't throw - profile is already created, just log the error
+    }
+
     // Process referral if code was provided
     if (referredByCode) {
       // Find referrer by code

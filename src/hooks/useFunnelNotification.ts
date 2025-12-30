@@ -140,13 +140,23 @@ export function useFunnelDay() {
         .from('user_subscriptions')
         .select('trial_start, trial_end, status')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error || !subscription?.trial_start) {
+      if (error) {
+        console.error('Error fetching subscription:', error);
         return null;
       }
 
-      const trialStart = new Date(subscription.trial_start);
+      // If no subscription record, fall back to user created_at
+      let trialStart: Date;
+      if (subscription?.trial_start) {
+        trialStart = new Date(subscription.trial_start);
+      } else if (user.created_at) {
+        trialStart = new Date(user.created_at);
+      } else {
+        return null;
+      }
+
       const now = new Date();
       const diffTime = now.getTime() - trialStart.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -155,7 +165,8 @@ export function useFunnelDay() {
       return Math.min(Math.max(0, diffDays), 14);
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 0, // Don't cache - always fetch fresh to get current day
+    refetchInterval: 1000 * 60 * 60, // Refetch every hour to update day number
   });
 }
 

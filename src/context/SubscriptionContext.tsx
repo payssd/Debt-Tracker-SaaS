@@ -116,6 +116,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (subscription?.trial_end) {
       const trialEnd = new Date(subscription.trial_end);
       const now = new Date();
+      // Set both to start of day for accurate day counting
+      trialEnd.setHours(23, 59, 59, 999);
+      now.setHours(0, 0, 0, 0);
       const diffTime = trialEnd.getTime() - now.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return Math.max(0, diffDays);
@@ -126,6 +129,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const createdAt = new Date(user.created_at);
       const trialEnd = new Date(createdAt.getTime() + 7 * 24 * 60 * 60 * 1000);
       const now = new Date();
+      // Set both to start of day for accurate day counting
+      trialEnd.setHours(23, 59, 59, 999);
+      now.setHours(0, 0, 0, 0);
       const diffTime = trialEnd.getTime() - now.getTime();
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return Math.max(0, diffDays);
