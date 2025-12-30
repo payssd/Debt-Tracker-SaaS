@@ -67,8 +67,11 @@ serve(async (req: Request) => {
     const trialEnd = new Date(now);
     trialEnd.setDate(trialEnd.getDate() + trialDays);
 
-    // Create profile
-    const { error: profileError } = await supabaseAdmin
+    // Create profile - try with user_type first, fallback without if column doesn't exist
+    let profileError = null;
+    
+    // First try with all fields including user_type
+    const { error: profileErrorWithUserType } = await supabaseAdmin
       .from('profiles')
       .insert({
         id: userId,
@@ -84,6 +87,29 @@ serve(async (req: Request) => {
         company_phone: companyPhone,
         user_type: userType,
       });
+
+    // If user_type column doesn't exist, retry without it
+    if (profileErrorWithUserType?.message?.includes('user_type')) {
+      console.log("user_type column not found, retrying without it");
+      const { error: profileErrorWithoutUserType } = await supabaseAdmin
+        .from('profiles')
+        .insert({
+          id: userId,
+          email: userEmail,
+          name: userName,
+          referral_code: newReferralCode,
+          referred_by: null,
+          subscription_status: 'FreeTrial',
+          subscription_end_date: trialEnd.toISOString(),
+          referral_count: 0,
+          company_name: companyName,
+          company_email: companyEmail,
+          company_phone: companyPhone,
+        });
+      profileError = profileErrorWithoutUserType;
+    } else {
+      profileError = profileErrorWithUserType;
+    }
 
     if (profileError) {
       console.error("Profile creation error:", profileError);
