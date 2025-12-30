@@ -69,6 +69,7 @@ const Auth: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [mode, setMode] = useState<AuthMode>(modeParam === 'reset' ? 'reset' : 'signin');
+  const [signupSuccess, setSignupSuccess] = useState(false);
   
   const { user, signUp, signIn, resetPassword, updatePassword } = useAuth();
   const navigate = useNavigate();
@@ -162,10 +163,7 @@ const Auth: React.FC = () => {
         variant: 'destructive',
       });
     } else {
-      toast({
-        title: 'Account created!',
-        description: 'Please check your email to verify your account, or sign in if email confirmation is disabled.',
-      });
+      setSignupSuccess(true);
     }
   };
 
@@ -234,6 +232,55 @@ const Auth: React.FC = () => {
       navigate('/dashboard');
     }
   };
+
+  // Show success screen after signup
+  if (signupSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/5 rounded-full blur-3xl" />
+        
+        <Card className="w-full max-w-md relative z-10 glass border-white/20 shadow-xl">
+          <CardHeader className="text-center">
+            <Logo />
+            <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <CardTitle className="text-2xl font-bold text-green-600 dark:text-green-400">Account Created!</CardTitle>
+            <CardDescription className="text-base mt-2">
+              We've sent a verification link to <span className="font-semibold text-foreground">{email}</span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
+              <p className="font-medium text-foreground mb-2">Next steps:</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Check your email inbox</li>
+                <li>Click the verification link</li>
+                <li>Sign in to your account</li>
+              </ol>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              Didn't receive the email? Check your spam folder or wait a few minutes.
+            </p>
+            <Button
+              className="w-full"
+              onClick={() => {
+                setSignupSuccess(false);
+                setMode('signin');
+              }}
+            >
+              Go to Sign In
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (mode === 'forgot') {
     return (
