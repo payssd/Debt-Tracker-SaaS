@@ -33,6 +33,9 @@ const authSchema = z.object({
 
 const signupSchema = authSchema.extend({
   name: z.string().min(2, 'Name must be at least 2 characters'),
+  companyName: z.string().min(2, 'Company/Business name is required'),
+  companyEmail: z.string().email('Invalid company email').optional().or(z.literal('')),
+  companyPhone: z.string().optional(),
 });
 
 const resetPasswordSchema = z.object({
@@ -54,6 +57,9 @@ const Auth: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [companyEmail, setCompanyEmail] = useState('');
+  const [companyPhone, setCompanyPhone] = useState('');
   const [referralCode, setReferralCode] = useState(referralCodeParam);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -122,7 +128,7 @@ const Auth: React.FC = () => {
     setErrors({});
     
     try {
-      signupSchema.parse({ email, password, name });
+      signupSchema.parse({ email, password, name, companyName, companyEmail, companyPhone });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Record<string, string> = {};
@@ -137,7 +143,11 @@ const Auth: React.FC = () => {
     }
     
     setLoading(true);
-    const { error } = await signUp(email, password, name, referralCode || undefined);
+    const { error } = await signUp(email, password, name, referralCode || undefined, {
+      companyName,
+      companyEmail: companyEmail || email,
+      companyPhone,
+    });
     setLoading(false);
     
     if (error) {
@@ -432,6 +442,42 @@ const Auth: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-company">Company/Business Name *</Label>
+                  <Input
+                    id="signup-company"
+                    type="text"
+                    placeholder="Your Business Name"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                  />
+                  {errors.companyName && <p className="text-sm text-destructive">{errors.companyName}</p>}
+                  <p className="text-xs text-muted-foreground">This will appear on your invoices</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-company-email">Business Email</Label>
+                    <Input
+                      id="signup-company-email"
+                      type="email"
+                      placeholder="Optional"
+                      value={companyEmail}
+                      onChange={(e) => setCompanyEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-company-phone">Business Phone</Label>
+                    <Input
+                      id="signup-company-phone"
+                      type="tel"
+                      placeholder="Optional"
+                      value={companyPhone}
+                      onChange={(e) => setCompanyPhone(e.target.value)}
+                    />
+                  </div>
                 </div>
                 
                 <div className="space-y-2">

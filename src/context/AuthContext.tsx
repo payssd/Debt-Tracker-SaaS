@@ -2,11 +2,17 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+interface CompanyInfo {
+  companyName: string;
+  companyEmail: string;
+  companyPhone?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string, referralCode?: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, name: string, referralCode?: string, companyInfo?: CompanyInfo) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
@@ -40,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name: string, referralCode?: string) => {
+  const signUp = async (email: string, password: string, name: string, referralCode?: string, companyInfo?: CompanyInfo) => {
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -51,6 +57,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         data: {
           name,
           referral_code: referralCode || null,
+          company_name: companyInfo?.companyName || null,
+          company_email: companyInfo?.companyEmail || email,
+          company_phone: companyInfo?.companyPhone || null,
         },
       },
     });

@@ -12,6 +12,7 @@ import {
   useReminderSettings,
   useUpdateReminderSettings,
 } from '@/hooks/useReminders';
+import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import {
   User,
@@ -23,18 +24,29 @@ import {
   Phone,
   MessageSquare,
   Key,
+  Building2,
 } from 'lucide-react';
 
 export default function Settings() {
   const { user, updatePassword } = useAuth();
   const { data: reminderSettings, isLoading: settingsLoading } = useReminderSettings();
+  const { data: profile, isLoading: profileLoading } = useProfile();
   const updateSettingsMutation = useUpdateReminderSettings();
+  const updateProfileMutation = useUpdateProfile();
   const { toast } = useToast();
 
   // Profile form state
   const [profileForm, setProfileForm] = useState({
     name: user?.user_metadata?.name || '',
     email: user?.email || '',
+  });
+
+  // Company info form state
+  const [companyForm, setCompanyForm] = useState({
+    company_name: '',
+    company_email: '',
+    company_phone: '',
+    company_address: '',
   });
 
   // Password form state
@@ -71,6 +83,17 @@ export default function Settings() {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    if (profile) {
+      setCompanyForm({
+        company_name: profile.company_name || '',
+        company_email: profile.company_email || '',
+        company_phone: profile.company_phone || '',
+        company_address: profile.company_address || '',
+      });
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (reminderSettings) {
@@ -149,7 +172,23 @@ export default function Settings() {
     }
   };
 
-  if (settingsLoading) {
+  const handleSaveCompanyInfo = async () => {
+    try {
+      await updateProfileMutation.mutateAsync(companyForm);
+      toast({
+        title: 'Company info saved',
+        description: 'Your business information has been updated and will appear on invoices.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save company information.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  if (settingsLoading || profileLoading) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[50vh]">
@@ -170,18 +209,22 @@ export default function Settings() {
         </div>
 
         <Tabs defaultValue="account" className="space-y-6">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="account" className="gap-2">
               <User className="h-4 w-4" />
-              Account
+              <span className="hidden sm:inline">Account</span>
+            </TabsTrigger>
+            <TabsTrigger value="business" className="gap-2">
+              <Building2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Business</span>
             </TabsTrigger>
             <TabsTrigger value="reminders" className="gap-2">
               <Bell className="h-4 w-4" />
-              Reminders
+              <span className="hidden sm:inline">Reminders</span>
             </TabsTrigger>
             <TabsTrigger value="security" className="gap-2">
               <Shield className="h-4 w-4" />
-              Security
+              <span className="hidden sm:inline">Security</span>
             </TabsTrigger>
           </TabsList>
 
@@ -239,6 +282,92 @@ export default function Settings() {
                       : 'Unknown'}
                   </p>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Business Tab */}
+          <TabsContent value="business" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Business Information
+                </CardTitle>
+                <CardDescription>
+                  This information will appear on your invoices and statements
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="company_name">Company/Business Name *</Label>
+                    <Input
+                      id="company_name"
+                      value={companyForm.company_name}
+                      onChange={(e) =>
+                        setCompanyForm((prev) => ({ ...prev, company_name: e.target.value }))
+                      }
+                      placeholder="Your Business Name"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Displayed on all invoices
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company_email">Business Email</Label>
+                    <Input
+                      id="company_email"
+                      type="email"
+                      value={companyForm.company_email}
+                      onChange={(e) =>
+                        setCompanyForm((prev) => ({ ...prev, company_email: e.target.value }))
+                      }
+                      placeholder="business@example.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="company_phone">Business Phone</Label>
+                    <Input
+                      id="company_phone"
+                      type="tel"
+                      value={companyForm.company_phone}
+                      onChange={(e) =>
+                        setCompanyForm((prev) => ({ ...prev, company_phone: e.target.value }))
+                      }
+                      placeholder="+254 700 000000"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company_address">Business Address</Label>
+                    <Input
+                      id="company_address"
+                      value={companyForm.company_address}
+                      onChange={(e) =>
+                        setCompanyForm((prev) => ({ ...prev, company_address: e.target.value }))
+                      }
+                      placeholder="123 Main St, Nairobi"
+                    />
+                  </div>
+                </div>
+
+                <Separator />
+
+                <Button
+                  onClick={handleSaveCompanyInfo}
+                  disabled={updateProfileMutation.isPending}
+                  className="w-full sm:w-auto"
+                >
+                  {updateProfileMutation.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Save Business Info
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>

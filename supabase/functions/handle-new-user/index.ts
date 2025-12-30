@@ -34,6 +34,9 @@ serve(async (req: Request) => {
     const userEmail = record.email;
     const userName = record.raw_user_meta_data?.name || userEmail.split('@')[0];
     const referredByCode = record.raw_user_meta_data?.referral_code;
+    const companyName = record.raw_user_meta_data?.company_name || null;
+    const companyEmail = record.raw_user_meta_data?.company_email || userEmail;
+    const companyPhone = record.raw_user_meta_data?.company_phone || null;
 
     console.log("Processing new user:", userId, "referred by:", referredByCode);
 
@@ -75,6 +78,9 @@ serve(async (req: Request) => {
         subscription_status: 'FreeTrial',
         subscription_end_date: trialEnd.toISOString(),
         referral_count: 0,
+        company_name: companyName,
+        company_email: companyEmail,
+        company_phone: companyPhone,
       });
 
     if (profileError) {

@@ -14,7 +14,14 @@ interface InvoiceData {
   customerAddress?: string | null;
 }
 
-export function generateInvoicePdf(invoice: InvoiceData): void {
+interface CompanyInfo {
+  company_name?: string | null;
+  company_email?: string | null;
+  company_phone?: string | null;
+  company_address?: string | null;
+}
+
+export function generateInvoicePdf(invoice: InvoiceData, companyInfo?: CompanyInfo): void {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   
@@ -27,12 +34,28 @@ export function generateInvoicePdf(invoice: InvoiceData): void {
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
   
-  // Left side - Company info (placeholder)
+  // Left side - Company info
   doc.setFont('helvetica', 'bold');
   doc.text('From:', 20, 50);
   doc.setFont('helvetica', 'normal');
-  doc.text('Your Company Name', 20, 58);
-  doc.text('your@email.com', 20, 66);
+  
+  const companyName = companyInfo?.company_name || 'Your Company Name';
+  const companyEmail = companyInfo?.company_email || 'your@email.com';
+  const companyPhone = companyInfo?.company_phone;
+  const companyAddress = companyInfo?.company_address;
+  
+  let yPos = 58;
+  doc.text(companyName, 20, yPos);
+  yPos += 8;
+  doc.text(companyEmail, 20, yPos);
+  if (companyPhone) {
+    yPos += 8;
+    doc.text(companyPhone, 20, yPos);
+  }
+  if (companyAddress) {
+    yPos += 8;
+    doc.text(companyAddress, 20, yPos);
+  }
   
   // Right side - Invoice info
   doc.setFont('helvetica', 'bold');

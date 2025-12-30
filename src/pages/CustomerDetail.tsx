@@ -27,6 +27,7 @@ import { EditCustomerDialog } from '@/components/EditCustomerDialog';
 import { EditInvoiceDialog } from '@/components/EditInvoiceDialog';
 import { formatCurrency } from '@/lib/data';
 import { generateInvoicePdf } from '@/lib/invoicePdf';
+import { useProfile } from '@/hooks/useProfile';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -50,6 +51,7 @@ export default function CustomerDetail() {
   const { toast } = useToast();
   const { data: customer, isLoading: customerLoading } = useCustomer(id || '');
   const { data: invoices = [], isLoading: invoicesLoading } = useCustomerInvoices(id || '');
+  const { data: profile } = useProfile();
   const updateInvoiceStatusMutation = useUpdateInvoiceStatus();
   const deleteCustomerMutation = useDeleteCustomer();
   const deleteInvoiceMutation = useDeleteInvoice();
@@ -137,7 +139,12 @@ export default function CustomerDetail() {
       customerName: customer?.name || 'Unknown',
       customerContact: customer?.contact || '',
       customerAddress: customer?.address,
-    });
+    }, profile ? {
+      company_name: profile.company_name,
+      company_email: profile.company_email,
+      company_phone: profile.company_phone,
+      company_address: profile.company_address,
+    } : undefined);
     toast({
       title: 'PDF Downloaded',
       description: `Invoice ${invoice.invoice_number} has been downloaded.`,

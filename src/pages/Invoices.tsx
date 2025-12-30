@@ -35,6 +35,7 @@ import { useInvoices, useUpdateInvoiceStatus, useCustomers, useDeleteInvoice, us
 import { EditInvoiceDialog } from '@/components/EditInvoiceDialog';
 import { formatCurrency } from '@/lib/data';
 import { generateInvoicePdf } from '@/lib/invoicePdf';
+import { useProfile } from '@/hooks/useProfile';
 import { format } from 'date-fns';
 import { FileText, Plus, Search, Check, Loader2, Trash2, Pencil, X, Download } from 'lucide-react';
 import { useState, useMemo } from 'react';
@@ -46,6 +47,7 @@ type FilterStatus = 'all' | InvoiceStatus;
 export default function Invoices() {
   const { data: invoices = [], isLoading: invoicesLoading } = useInvoices();
   const { data: customers = [] } = useCustomers();
+  const { data: profile } = useProfile();
   const updateInvoiceStatusMutation = useUpdateInvoiceStatus();
   const deleteInvoiceMutation = useDeleteInvoice();
   const bulkDeleteMutation = useBulkDeleteInvoices();
@@ -78,7 +80,12 @@ export default function Invoices() {
       customerName: customer?.name || 'Unknown',
       customerContact: customer?.contact || '',
       customerAddress: customer?.address,
-    });
+    }, profile ? {
+      company_name: profile.company_name,
+      company_email: profile.company_email,
+      company_phone: profile.company_phone,
+      company_address: profile.company_address,
+    } : undefined);
     toast({
       title: 'PDF Downloaded',
       description: `Invoice ${invoice.invoice_number} has been downloaded.`,
