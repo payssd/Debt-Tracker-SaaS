@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCustomers, useInvoices } from '@/hooks/useSupabaseData';
+import { useUserTypeLabels } from '@/hooks/useProfile';
 import { formatCurrency } from '@/lib/data';
 import { Users, Plus, Search, ChevronRight, AlertTriangle, Loader2 } from 'lucide-react';
 import { useState, useMemo } from 'react';
@@ -12,6 +13,7 @@ import { cn } from '@/lib/utils';
 export default function Customers() {
   const { data: customers = [], isLoading: customersLoading } = useCustomers();
   const { data: invoices = [], isLoading: invoicesLoading } = useInvoices();
+  const labels = useUserTypeLabels();
   const [searchQuery, setSearchQuery] = useState('');
 
   const isLoading = customersLoading || invoicesLoading;
@@ -49,15 +51,15 @@ export default function Customers() {
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Customers</h1>
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{labels.customers}</h1>
             <p className="mt-1 text-muted-foreground">
-              Manage your customer database
+              Manage your {labels.customers.toLowerCase()} database
             </p>
           </div>
           <Link to="/customers/new">
             <Button className="gap-2">
               <Plus className="h-4 w-4" />
-              Add Customer
+              {labels.addCustomer}
             </Button>
           </Link>
         </div>
@@ -70,14 +72,14 @@ export default function Customers() {
                   <Users className="h-5 w-5 text-accent" />
                 </div>
                 <div>
-                  <CardTitle>All Customers</CardTitle>
-                  <CardDescription>{customers.length} total customers</CardDescription>
+                  <CardTitle>{labels.allCustomers}</CardTitle>
+                  <CardDescription>{customers.length} total {labels.customers.toLowerCase()}</CardDescription>
                 </div>
               </div>
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search customers..."
+                  placeholder={labels.searchCustomers}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9"
@@ -132,11 +134,11 @@ export default function Customers() {
             ) : (
               <div className="text-center py-12">
                 <Users className="h-12 w-12 mx-auto text-muted-foreground/50" />
-                <h3 className="mt-4 font-semibold">No customers found</h3>
+                <h3 className="mt-4 font-semibold">{labels.noCustomers}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {searchQuery
                     ? 'Try a different search term'
-                    : 'Add your first customer to get started'}
+                    : labels.addFirstCustomer}
                 </p>
               </div>
             )}

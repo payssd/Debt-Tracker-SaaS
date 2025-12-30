@@ -2,10 +2,13 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+type UserType = 'landlord' | 'shop_owner';
+
 interface CompanyInfo {
   companyName: string;
   companyEmail: string;
   companyPhone?: string;
+  userType?: UserType;
 }
 
 interface AuthContextType {
@@ -60,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           company_name: companyInfo?.companyName || null,
           company_email: companyInfo?.companyEmail || email,
           company_phone: companyInfo?.companyPhone || null,
+          user_type: companyInfo?.userType || 'shop_owner',
         },
       },
     });

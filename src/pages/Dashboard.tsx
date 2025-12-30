@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useCustomers, useInvoices } from '@/hooks/useSupabaseData';
 import { useSubscription } from '@/context/SubscriptionContext';
+import { useUserTypeLabels } from '@/hooks/useProfile';
 import { formatCurrency } from '@/lib/data';
 import { 
   Users, 
@@ -31,6 +32,7 @@ export default function Dashboard() {
   const { data: customers = [], isLoading: customersLoading } = useCustomers();
   const { data: invoices = [], isLoading: invoicesLoading } = useInvoices();
   const { subscription, isActive, isTrialing, trialDaysLeft, loading: subscriptionLoading } = useSubscription();
+  const labels = useUserTypeLabels();
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
 
@@ -106,14 +108,14 @@ export default function Dashboard() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Dashboard</h1>
             <p className="mt-1 text-muted-foreground">
-              Track your customers and outstanding invoices
+              Track your {labels.customers.toLowerCase()} and outstanding invoices
             </p>
           </div>
           <div className="flex gap-2">
             <Link to="/customers/new">
               <Button variant="outline" className="gap-2">
                 <Users className="h-4 w-4" />
-                <span className="hidden sm:inline">Add Customer</span>
+                <span className="hidden sm:inline">{labels.addCustomer}</span>
               </Button>
             </Link>
             <Link to="/invoices/new">
@@ -174,7 +176,7 @@ export default function Dashboard() {
         {/* Stats Grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
-            title="Total Customers"
+            title={labels.totalCustomers}
             value={stats.totalCustomers}
             icon={Users}
             variant="default"
@@ -202,14 +204,14 @@ export default function Dashboard() {
         {/* Customers Section */}
         <div className="space-y-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-semibold">Customers Overview</h2>
+            <h2 className="text-lg font-semibold">{labels.customers} Overview</h2>
             
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search customers..."
+                  placeholder={labels.searchCustomers}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 w-full sm:w-64"
@@ -274,17 +276,17 @@ export default function Dashboard() {
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <Users className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="mt-4 font-semibold">No customers found</h3>
+              <h3 className="mt-4 font-semibold">{labels.noCustomers}</h3>
               <p className="mt-1 text-sm text-muted-foreground">
                 {searchQuery || filter !== 'all'
                   ? 'Try adjusting your search or filter'
-                  : 'Add your first customer to get started'}
+                  : labels.addFirstCustomer}
               </p>
               {!searchQuery && filter === 'all' && (
                 <Link to="/customers/new" className="mt-4">
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
-                    Add Customer
+                    {labels.addCustomer}
                   </Button>
                 </Link>
               )}

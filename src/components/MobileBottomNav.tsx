@@ -19,13 +19,7 @@ import {
 import { ClipboardList, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
-
-const mainNavItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/customers', label: 'Customers', icon: Users },
-  { href: '/invoices', label: 'Invoices', icon: FileText },
-  { href: '/referrals', label: 'Referrals', icon: Gift },
-];
+import { useUserTypeLabels } from '@/hooks/useProfile';
 
 const moreNavItems = [
   { href: '/statements', label: 'Statements', icon: ClipboardList },
@@ -36,6 +30,14 @@ export function MobileBottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const labels = useUserTypeLabels();
+
+  const mainNavItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/customers', label: labels.customers, icon: Users },
+    { href: '/invoices', label: 'Invoices', icon: FileText },
+    { href: '/referrals', label: 'Referrals', icon: Gift },
+  ];
   
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
 

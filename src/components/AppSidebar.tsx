@@ -37,17 +37,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
-
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/customers', label: 'Customers', icon: Users },
-  { href: '/invoices', label: 'Invoices', icon: FileText },
-  { href: '/statements', label: 'Statements', icon: ClipboardList },
-  { href: '/reminders', label: 'Reminders', icon: MessageSquare },
-  { href: '/referrals', label: 'Referrals', icon: Gift },
-  { href: '/subscription', label: 'Subscription', icon: Crown },
-  { href: '/settings', label: 'Settings', icon: Settings },
-];
+import { useUserTypeLabels } from '@/hooks/useProfile';
 
 export function AppSidebar() {
   const location = useLocation();
@@ -55,7 +45,19 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const { theme, setTheme } = useTheme();
   const { user: authUser, signOut } = useAuth();
+  const labels = useUserTypeLabels();
   const isCollapsed = state === 'collapsed';
+
+  const navItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/customers', label: labels.customers, icon: Users },
+    { href: '/invoices', label: 'Invoices', icon: FileText },
+    { href: '/statements', label: 'Statements', icon: ClipboardList },
+    { href: '/reminders', label: 'Reminders', icon: MessageSquare },
+    { href: '/referrals', label: 'Referrals', icon: Gift },
+    { href: '/subscription', label: 'Subscription', icon: Crown },
+    { href: '/settings', label: 'Settings', icon: Settings },
+  ];
 
   const isActive = (path: string) => location.pathname === path;
 

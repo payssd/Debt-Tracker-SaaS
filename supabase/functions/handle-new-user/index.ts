@@ -37,6 +37,7 @@ serve(async (req: Request) => {
     const companyName = record.raw_user_meta_data?.company_name || null;
     const companyEmail = record.raw_user_meta_data?.company_email || userEmail;
     const companyPhone = record.raw_user_meta_data?.company_phone || null;
+    const userType = record.raw_user_meta_data?.user_type || 'shop_owner';
 
     console.log("Processing new user:", userId, "referred by:", referredByCode);
 
@@ -81,6 +82,7 @@ serve(async (req: Request) => {
         company_name: companyName,
         company_email: companyEmail,
         company_phone: companyPhone,
+        user_type: userType,
       });
 
     if (profileError) {

@@ -9,11 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, UserPlus, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAddCustomer } from '@/hooks/useSupabaseData';
+import { useUserTypeLabels } from '@/hooks/useProfile';
 
 export default function AddCustomer() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const addCustomerMutation = useAddCustomer();
+  const labels = useUserTypeLabels();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -41,7 +43,7 @@ export default function AddCustomer() {
       });
 
       toast({
-        title: 'Customer Added',
+        title: `${labels.customer} Added`,
         description: `${formData.name} has been added successfully.`,
       });
 
@@ -49,7 +51,7 @@ export default function AddCustomer() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to add customer. Please try again.',
+        description: `Failed to add ${labels.customer.toLowerCase()}. Please try again.`,
         variant: 'destructive',
       });
     }
@@ -74,9 +76,9 @@ export default function AddCustomer() {
                 <UserPlus className="h-5 w-5 text-accent" />
               </div>
               <div>
-                <CardTitle>Add New Customer</CardTitle>
+                <CardTitle>{labels.addCustomer}</CardTitle>
                 <CardDescription>
-                  Enter customer details to start tracking their invoices
+                  Enter {labels.customer.toLowerCase()} details to start tracking their invoices
                 </CardDescription>
               </div>
             </div>
@@ -85,7 +87,7 @@ export default function AddCustomer() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">
-                  Customer Name <span className="text-destructive">*</span>
+                  {labels.customerName} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="name"
@@ -136,7 +138,7 @@ export default function AddCustomer() {
                       Adding...
                     </>
                   ) : (
-                    'Add Customer'
+                    labels.addCustomer
                   )}
                 </Button>
               </div>

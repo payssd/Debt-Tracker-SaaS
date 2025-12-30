@@ -5,10 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import { Eye, EyeOff, Gift, Loader2, ArrowLeft, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Gift, Loader2, ArrowLeft, Sparkles, Building2, Home } from 'lucide-react';
 import { z } from 'zod';
+
+type UserType = 'landlord' | 'shop_owner';
 
 const Logo = () => (
   <div className="flex items-center justify-center gap-3 mb-2">
@@ -57,6 +60,7 @@ const Auth: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [userType, setUserType] = useState<UserType>('shop_owner');
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
@@ -147,6 +151,7 @@ const Auth: React.FC = () => {
       companyName,
       companyEmail: companyEmail || email,
       companyPhone,
+      userType,
     });
     setLoading(false);
     
@@ -430,6 +435,46 @@ const Auth: React.FC = () => {
                     onChange={(e) => setName(e.target.value)}
                   />
                   {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                </div>
+
+                <div className="space-y-3">
+                  <Label>I am a...</Label>
+                  <RadioGroup
+                    value={userType}
+                    onValueChange={(value) => setUserType(value as UserType)}
+                    className="grid grid-cols-2 gap-3"
+                  >
+                    <div>
+                      <RadioGroupItem
+                        value="landlord"
+                        id="landlord"
+                        className="peer sr-only"
+                      />
+                      <Label
+                        htmlFor="landlord"
+                        className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
+                      >
+                        <Home className="mb-2 h-6 w-6" />
+                        <span className="text-sm font-medium">Landlord</span>
+                        <span className="text-xs text-muted-foreground">Manage tenants</span>
+                      </Label>
+                    </div>
+                    <div>
+                      <RadioGroupItem
+                        value="shop_owner"
+                        id="shop_owner"
+                        className="peer sr-only"
+                      />
+                      <Label
+                        htmlFor="shop_owner"
+                        className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
+                      >
+                        <Building2 className="mb-2 h-6 w-6" />
+                        <span className="text-sm font-medium">Shop Owner</span>
+                        <span className="text-xs text-muted-foreground">Manage customers</span>
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </div>
                 
                 <div className="space-y-2">
