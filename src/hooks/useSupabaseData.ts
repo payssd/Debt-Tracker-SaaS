@@ -387,7 +387,7 @@ export function useUpdateInvoice() {
   });
 }
 
-async function updateCustomerOutstanding(customerId: string) {
+export async function updateCustomerOutstanding(customerId: string) {
   // Calculate outstanding total (invoice amount - amount paid for non-Paid invoices)
   const { data: invoices } = await supabase
     .from('invoices')

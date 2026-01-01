@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { Payment, PaymentMethod } from '@/types';
+import { updateCustomerOutstanding } from './useSupabaseData';
 
 export interface PaymentWithInvoice extends Payment {
   invoice?: {
@@ -63,6 +64,13 @@ export function useAddPayment() {
       payment_method: PaymentMethod;
       notes?: string;
     }) => {
+      // Get customer_id from invoice first
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select('customer_id')
+        .eq('id', payment.invoice_id)
+        .single();
+      
       const { data, error } = await supabase
         .from('payments')
         .insert({
@@ -77,6 +85,12 @@ export function useAddPayment() {
         .single();
       
       if (error) throw error;
+      
+      // Update customer outstanding total after payment
+      if (invoice?.customer_id) {
+        await updateCustomerOutstanding(invoice.customer_id);
+      }
+      
       return data;
     },
     onSuccess: (_, variables) => {
@@ -99,6 +113,13 @@ export function useUpdatePayment() {
       payment_method?: PaymentMethod;
       notes?: string;
     }) => {
+      // Get invoice and customer info before update
+      const { data: payment } = await supabase
+        .from('payments')
+        .select('invoice_id, invoice:invoices(customer_id)')
+        .eq('id', id)
+        .single();
+      
       const { data, error } = await supabase
         .from('payments')
         .update(updates)
@@ -107,6 +128,13 @@ export function useUpdatePayment() {
         .single();
       
       if (error) throw error;
+      
+      // Update customer outstanding total
+      const customerId = (payment?.invoice as any)?.customer_id;
+      if (customerId) {
+        await updateCustomerOutstanding(customerId);
+      }
+      
       return data;
     },
     onSuccess: () => {
@@ -122,12 +150,25 @@ export function useDeletePayment() {
   
   return useMutation({
     mutationFn: async (paymentId: string) => {
+      // Get invoice and customer info before delete
+      const { data: payment } = await supabase
+        .from('payments')
+        .select('invoice_id, invoice:invoices(customer_id)')
+        .eq('id', paymentId)
+        .single();
+      
       const { error } = await supabase
         .from('payments')
         .delete()
         .eq('id', paymentId);
       
       if (error) throw error;
+      
+      // Update customer outstanding total
+      const customerId = (payment?.invoice as any)?.customer_id;
+      if (customerId) {
+        await updateCustomerOutstanding(customerId);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });

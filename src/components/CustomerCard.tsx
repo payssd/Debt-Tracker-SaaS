@@ -150,7 +150,7 @@ export function CustomerCard({ customer, invoices }: CustomerCardProps) {
               disabled={!firstUnpaidInvoice}
             >
               <Banknote className="h-3 w-3" />
-              Add Payment
+              Pay
             </Button>
           </div>
         </div>
