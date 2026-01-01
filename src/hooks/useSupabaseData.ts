@@ -406,3 +406,28 @@ export async function updateCustomerOutstanding(customerId: string) {
     .update({ outstanding_total: total })
     .eq('id', customerId);
 }
+
+// Recalculate outstanding totals for ALL customers (fixes stale data)
+export async function recalculateAllCustomerOutstanding() {
+  const { data: customers } = await supabase
+    .from('customers')
+    .select('id');
+  
+  if (!customers) return;
+  
+  for (const customer of customers) {
+    await updateCustomerOutstanding(customer.id);
+  }
+}
+
+// Hook to trigger recalculation
+export function useRecalculateOutstanding() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: recalculateAllCustomerOutstanding,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+    },
+  });
+}

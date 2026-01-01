@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useCustomers, useInvoices } from '@/hooks/useSupabaseData';
+import { useCustomers, useInvoices, useRecalculateOutstanding } from '@/hooks/useSupabaseData';
 import { useSubscription } from '@/context/SubscriptionContext';
 import { useUserTypeLabels } from '@/hooks/useProfile';
 import { formatCurrency } from '@/lib/data';
@@ -23,7 +23,7 @@ import {
   Crown,
   Clock
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 type FilterType = 'all' | 'overdue' | 'pending' | 'clear';
@@ -32,11 +32,19 @@ export default function Dashboard() {
   const { data: customers = [], isLoading: customersLoading } = useCustomers();
   const { data: invoices = [], isLoading: invoicesLoading } = useInvoices();
   const { subscription, isActive, isTrialing, trialDaysLeft, loading: subscriptionLoading } = useSubscription();
+  const recalculateOutstanding = useRecalculateOutstanding();
   const labels = useUserTypeLabels();
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
 
   const isLoading = customersLoading || invoicesLoading || subscriptionLoading;
+
+  // Recalculate all customer outstanding totals on mount (fixes stale data)
+  useEffect(() => {
+    if (!customersLoading && customers.length > 0) {
+      recalculateOutstanding.mutate();
+    }
+  }, [customersLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const stats = useMemo(() => {
     // Defensive calculations - ensure no NaN values
