@@ -130,7 +130,7 @@ export function CustomerCard({ customer, invoices }: CustomerCardProps) {
 
           {/* Quick Actions - Always visible */}
           <div className="flex items-center gap-1">
-            <Link to={`/invoices/add?customer=${customer.id}`} onClick={(e) => e.stopPropagation()}>
+            <Link to={`/invoices/new?customer=${customer.id}`} onClick={(e) => e.stopPropagation()}>
               <Button variant="outline" size="sm" className="h-7 gap-1 text-xs">
                 <Plus className="h-3 w-3" />
                 Debt
