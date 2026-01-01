@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, name: string, referralCode?: string, companyInfo?: CompanyInfo) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -67,6 +67,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       },
     });
+    
+    // Fallback: Save profile data directly after signup (in case edge function doesn't trigger)
+    if (data?.user && !error) {
+      try {
+        // Check if profile already exists
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', data.user.id)
+          .maybeSingle();
+        
+        if (!existingProfile) {
+          // Create profile with signup data
+          await supabase.from('profiles').insert({
+            id: data.user.id,
+            email: email,
+            name: name,
+            company_name: companyInfo?.companyName || null,
+            company_email: companyInfo?.companyEmail || email,
+            company_phone: companyInfo?.companyPhone || null,
+            user_type: companyInfo?.userType || 'shop_owner',
+          });
+        } else {
+          // Update existing profile with signup data
+          await supabase.from('profiles').update({
+            name: name,
+            company_name: companyInfo?.companyName || null,
+            company_email: companyInfo?.companyEmail || email,
+            company_phone: companyInfo?.companyPhone || null,
+            user_type: companyInfo?.userType || 'shop_owner',
+          }).eq('id', data.user.id);
+        }
+      } catch (profileError) {
+        console.error('Failed to save profile during signup:', profileError);
+        // Don't fail signup if profile save fails - user can update in settings
+      }
+    }
     
     return { error: error as Error | null };
   };
