@@ -142,19 +142,52 @@ export function hasOverdueInvoices(customerId: string, invoices: Invoice[]): boo
   return invoices.some((inv) => inv.customerId === customerId && inv.status === 'Overdue');
 }
 
-export function generateWhatsAppMessage(customer: Customer, invoice: Invoice): string {
+export function generateWhatsAppMessage(customer: Customer, invoice: Invoice & { amountPaid?: number }): string {
+  const amountPaid = invoice.amountPaid || 0;
+  const balance = invoice.amount - amountPaid;
+  
+  if (amountPaid > 0 && balance > 0) {
+    return `Hello ${customer.name}, regarding invoice ${invoice.invoiceNumber}:\n\n` +
+      `Total Amount: ${formatCurrency(invoice.amount)}\n` +
+      `Amount Paid: ${formatCurrency(amountPaid)}\n` +
+      `Balance Due: ${formatCurrency(balance)}\n\n` +
+      `Due Date: ${formatDate(invoice.dueDate)}\n\n` +
+      `Kindly settle the remaining balance at your earliest convenience. Thank you!`;
+  }
+  
   return `Hello ${customer.name}, invoice ${invoice.invoiceNumber} (${formatCurrency(invoice.amount)}) is due on ${formatDate(invoice.dueDate)}. Kindly advise on payment. Thank you.`;
 }
 
-export function generateBulkReminderMessage(customer: Customer, invoices: Invoice[]): string {
+export function generateBulkReminderMessage(customer: Customer, invoices: (Invoice & { amountPaid?: number })[]): string {
   const pendingInvoices = invoices.filter(
     (inv) => inv.customerId === customer.id && inv.status !== 'Paid'
   );
-  const total = pendingInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+  
+  const totalInvoiced = pendingInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+  const totalPaid = pendingInvoices.reduce((sum, inv) => sum + (inv.amountPaid || 0), 0);
+  const totalBalance = totalInvoiced - totalPaid;
   
   const invoiceList = pendingInvoices
-    .map((inv) => `• ${inv.invoiceNumber}: ${formatCurrency(inv.amount)} (Due: ${formatDate(inv.dueDate)})`)
+    .map((inv) => {
+      const paid = inv.amountPaid || 0;
+      const balance = inv.amount - paid;
+      if (paid > 0) {
+        return `• ${inv.invoiceNumber}: ${formatCurrency(inv.amount)} (Paid: ${formatCurrency(paid)}, Balance: ${formatCurrency(balance)})`;
+      }
+      return `• ${inv.invoiceNumber}: ${formatCurrency(inv.amount)} (Due: ${formatDate(inv.dueDate)})`;
+    })
     .join('\n');
 
-  return `Hello ${customer.name},\n\nThis is a friendly reminder about your outstanding invoices:\n\n${invoiceList}\n\nTotal Outstanding: ${formatCurrency(total)}\n\nKindly advise on payment. Thank you for your business!`;
+  let message = `Hello ${customer.name},\n\nThis is a friendly reminder about your outstanding invoices:\n\n${invoiceList}\n\n`;
+  
+  if (totalPaid > 0) {
+    message += `Total Invoiced: ${formatCurrency(totalInvoiced)}\n`;
+    message += `Total Paid: ${formatCurrency(totalPaid)}\n`;
+    message += `Balance Due: ${formatCurrency(totalBalance)}\n\n`;
+  } else {
+    message += `Total Outstanding: ${formatCurrency(totalBalance)}\n\n`;
+  }
+  
+  message += `Kindly advise on payment. Thank you for your business!`;
+  return message;
 }

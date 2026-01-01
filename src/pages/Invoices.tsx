@@ -79,6 +79,7 @@ export default function Invoices() {
       issue_date: invoice.issue_date,
       due_date: invoice.due_date,
       amount: invoice.amount,
+      amount_paid: invoice.amount_paid || 0,
       status: invoice.status,
       customerName: customer?.name || 'Unknown',
       customerContact: customer?.contact || '',

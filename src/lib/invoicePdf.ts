@@ -8,6 +8,7 @@ interface InvoiceData {
   issue_date: string;
   due_date: string;
   amount: number;
+  amount_paid?: number;
   status: string;
   customerName: string;
   customerContact: string;
@@ -75,9 +76,14 @@ export function generateInvoicePdf(invoice: InvoiceData, companyInfo?: CompanyIn
     doc.text(invoice.customerAddress, 20, 119);
   }
   
+  // Calculate payment info
+  const amountPaid = invoice.amount_paid || 0;
+  const balance = invoice.amount - amountPaid;
+  
   // Status badge
   const statusColors: Record<string, [number, number, number]> = {
     'Pending': [234, 179, 8],
+    'Partial': [59, 130, 246],
     'Paid': [34, 197, 94],
     'Overdue': [239, 68, 68],
   };
@@ -96,8 +102,9 @@ export function generateInvoicePdf(invoice: InvoiceData, companyInfo?: CompanyIn
     head: [['Description', 'Amount']],
     body: [
       ['Invoice Amount', formatCurrency(invoice.amount)],
+      ['Amount Paid', formatCurrency(amountPaid)],
     ],
-    foot: [['Total Due', formatCurrency(invoice.status === 'Paid' ? 0 : invoice.amount)]],
+    foot: [['Balance Due', formatCurrency(balance)]],
     headStyles: { 
       fillColor: [59, 130, 246],
       fontSize: 12,

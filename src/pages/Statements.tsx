@@ -46,7 +46,12 @@ export default function Statements() {
     () =>
       customerInvoices
         .filter((inv) => inv.status !== 'Paid')
-        .reduce((sum, inv) => sum + Number(inv.amount), 0),
+        .reduce((sum, inv) => sum + (Number(inv.amount) - Number(inv.amount_paid || 0)), 0),
+    [customerInvoices]
+  );
+
+  const totalPaid = useMemo(
+    () => customerInvoices.reduce((sum, inv) => sum + Number(inv.amount_paid || 0), 0),
     [customerInvoices]
   );
 
@@ -92,12 +97,14 @@ export default function Statements() {
       formatDateStr(inv.issue_date),
       formatDateStr(inv.due_date),
       formatCurrency(Number(inv.amount)),
+      formatCurrency(Number(inv.amount_paid || 0)),
+      formatCurrency(Number(inv.amount) - Number(inv.amount_paid || 0)),
       inv.status,
     ]);
 
     autoTable(doc, {
       startY: 90,
-      head: [['Invoice #', 'Issue Date', 'Due Date', 'Amount', 'Status']],
+      head: [['Invoice #', 'Issue Date', 'Due Date', 'Amount', 'Paid', 'Balance', 'Status']],
       body: tableData,
       theme: 'striped',
       headStyles: {
@@ -106,25 +113,38 @@ export default function Statements() {
         fontStyle: 'bold',
       },
       styles: {
-        fontSize: 10,
-        cellPadding: 5,
+        fontSize: 9,
+        cellPadding: 4,
       },
       columnStyles: {
         3: { halign: 'right' },
-        4: { halign: 'center' },
+        4: { halign: 'right' },
+        5: { halign: 'right' },
+        6: { halign: 'center' },
       },
     });
 
-    // Total
+    // Summary
     const finalY = (doc as any).lastAutoTable.finalY + 15;
     doc.setFillColor(245, 245, 245);
-    doc.rect(pageWidth - 90, finalY - 5, 70, 25, 'F');
+    doc.rect(pageWidth - 100, finalY - 5, 80, 45, 'F');
 
-    doc.setFontSize(11);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Total Invoiced:', pageWidth - 95, finalY + 5);
+    doc.text(formatCurrency(customerInvoices.reduce((sum, inv) => sum + Number(inv.amount), 0)), pageWidth - 25, finalY + 5, { align: 'right' });
+    
+    doc.text('Total Paid:', pageWidth - 95, finalY + 15);
+    doc.setTextColor(34, 197, 94);
+    doc.text(formatCurrency(totalPaid), pageWidth - 25, finalY + 15, { align: 'right' });
+    
+    doc.setTextColor(30, 41, 59);
     doc.setFont('helvetica', 'bold');
-    doc.text('Total Outstanding:', pageWidth - 85, finalY + 5);
-    doc.setFontSize(14);
-    doc.text(formatCurrency(totalOutstanding), pageWidth - 85, finalY + 15);
+    doc.setFontSize(11);
+    doc.text('Balance Due:', pageWidth - 95, finalY + 30);
+    doc.setTextColor(239, 68, 68);
+    doc.text(formatCurrency(totalOutstanding), pageWidth - 25, finalY + 30, { align: 'right' });
+    doc.setTextColor(0, 0, 0);
 
     // Footer
     doc.setFontSize(9);
@@ -216,6 +236,8 @@ export default function Statements() {
                         <TableHead>Issue Date</TableHead>
                         <TableHead>Due Date</TableHead>
                         <TableHead className="text-right">Amount</TableHead>
+                        <TableHead className="text-right">Paid</TableHead>
+                        <TableHead className="text-right">Balance</TableHead>
                         <TableHead className="text-center">Status</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -234,6 +256,12 @@ export default function Statements() {
                           <TableCell>{formatDateStr(invoice.due_date)}</TableCell>
                           <TableCell className="text-right font-medium">
                             {formatCurrency(Number(invoice.amount))}
+                          </TableCell>
+                          <TableCell className="text-right text-green-600">
+                            {formatCurrency(Number(invoice.amount_paid || 0))}
+                          </TableCell>
+                          <TableCell className="text-right font-medium text-orange-600">
+                            {formatCurrency(Number(invoice.amount) - Number(invoice.amount_paid || 0))}
                           </TableCell>
                           <TableCell className="text-center">
                             <StatusBadge status={invoice.status} />

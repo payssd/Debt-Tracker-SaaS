@@ -135,23 +135,43 @@ export default function Reminders() {
   const reminderMessage = useMemo(() => {
     if (!selectedCustomer || selectedInvoices.length === 0) return '';
 
-    const total = selectedInvoices.reduce((sum, inv) => sum + Number(inv.amount), 0);
+    const totalInvoiced = selectedInvoices.reduce((sum, inv) => sum + Number(inv.amount), 0);
+    const totalPaid = selectedInvoices.reduce((sum, inv) => sum + Number(inv.amount_paid || 0), 0);
+    const totalBalance = totalInvoiced - totalPaid;
+    
     const invoiceList = selectedInvoices
-      .map(
-        (inv) =>
-          `• ${inv.invoice_number}: ${formatCurrency(Number(inv.amount))} (Due: ${formatDateStr(inv.due_date)})`
-      )
+      .map((inv) => {
+        const paid = Number(inv.amount_paid || 0);
+        const balance = Number(inv.amount) - paid;
+        if (paid > 0) {
+          return `• ${inv.invoice_number}: ${formatCurrency(Number(inv.amount))} (Paid: ${formatCurrency(paid)}, Balance: ${formatCurrency(balance)})`;
+        }
+        return `• ${inv.invoice_number}: ${formatCurrency(Number(inv.amount))} (Due: ${formatDateStr(inv.due_date)})`;
+      })
       .join('\n');
 
-    return `Hello ${selectedCustomer.name},
+    let message = `Hello ${selectedCustomer.name},
 
 This is a friendly reminder about your outstanding invoice${selectedInvoices.length > 1 ? 's' : ''}:
 
 ${invoiceList}
 
-Total Outstanding: ${formatCurrency(total)}
+`;
 
-Kindly advise on payment. Thank you for your business!`;
+    if (totalPaid > 0) {
+      message += `Total Invoiced: ${formatCurrency(totalInvoiced)}
+Total Paid: ${formatCurrency(totalPaid)}
+Balance Due: ${formatCurrency(totalBalance)}
+
+`;
+    } else {
+      message += `Total Outstanding: ${formatCurrency(totalBalance)}
+
+`;
+    }
+
+    message += `Kindly advise on payment. Thank you for your business!`;
+    return message;
   }, [selectedCustomer, selectedInvoices]);
 
   const handleSelectAll = (checked: boolean) => {
