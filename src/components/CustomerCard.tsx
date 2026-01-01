@@ -18,13 +18,14 @@ export function CustomerCard({ customer, invoices }: CustomerCardProps) {
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   
-  // Calculate payment stats for this customer
+  // Calculate payment stats for this customer - with defensive NaN checks
   const customerInvoices = invoices.filter(inv => inv.customer_id === customer.id);
   const pendingCount = customerInvoices.filter(inv => inv.status === 'Pending' || inv.status === 'Overdue' || inv.status === 'Partial').length;
   const isOverdue = customerInvoices.some(inv => inv.status === 'Overdue');
-  const totalInvoiced = customerInvoices.reduce((sum, inv) => sum + Number(inv.amount), 0);
-  const totalPaid = customerInvoices.reduce((sum, inv) => sum + Number(inv.amount_paid || 0), 0);
-  const hasPartialPayments = totalPaid > 0 && totalPaid < totalInvoiced;
+  const totalInvoiced = customerInvoices.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
+  const totalPaid = customerInvoices.reduce((sum, inv) => sum + (Number(inv.amount_paid) || 0), 0);
+  const balance = (Number(customer.outstanding_total) || 0);
+  const hasPartialPayments = totalPaid > 0 && balance > 0;
   
   // Get the oldest overdue invoice to show "Overdue by X days"
   const overdueInfo = useMemo(() => {
@@ -84,7 +85,7 @@ export function CustomerCard({ customer, invoices }: CustomerCardProps) {
               "text-lg font-bold",
               isOverdue ? "text-red-600 dark:text-red-400" : "text-foreground"
             )}>
-              {formatCurrency(customer.outstanding_total)}
+              {formatCurrency(balance)}
             </p>
             <p className="text-xs text-muted-foreground">Balance Due</p>
           </div>
@@ -133,20 +134,24 @@ export function CustomerCard({ customer, invoices }: CustomerCardProps) {
             <Link to={`/invoices/new?customer=${customer.id}`} onClick={(e) => e.stopPropagation()}>
               <Button variant="outline" size="sm" className="h-7 gap-1 text-xs">
                 <Plus className="h-3 w-3" />
-                Debt
+                Add Debt
               </Button>
             </Link>
-            {firstUnpaidInvoice && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="h-7 gap-1 text-xs text-green-600 border-green-300 hover:bg-green-50 dark:hover:bg-green-950"
-                onClick={handleQuickPayment}
-              >
-                <Banknote className="h-3 w-3" />
-                Pay
-              </Button>
-            )}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={cn(
+                "h-7 gap-1 text-xs",
+                firstUnpaidInvoice 
+                  ? "text-green-600 border-green-300 hover:bg-green-50 dark:hover:bg-green-950" 
+                  : "opacity-50 cursor-not-allowed"
+              )}
+              onClick={handleQuickPayment}
+              disabled={!firstUnpaidInvoice}
+            >
+              <Banknote className="h-3 w-3" />
+              Add Payment
+            </Button>
           </div>
         </div>
 

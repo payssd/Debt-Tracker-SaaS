@@ -39,23 +39,28 @@ export default function Dashboard() {
   const isLoading = customersLoading || invoicesLoading || subscriptionLoading;
 
   const stats = useMemo(() => {
-    const totalOutstanding = customers.reduce((sum, c) => sum + Number(c.outstanding_total), 0);
+    // Defensive calculations - ensure no NaN values
+    const totalOutstanding = customers.reduce((sum, c) => sum + (Number(c.outstanding_total) || 0), 0);
     const overdueCount = invoices.filter((inv) => inv.status === 'Overdue').length;
     const overdueAmount = invoices
       .filter((inv) => inv.status === 'Overdue')
-      .reduce((sum, inv) => sum + (Number(inv.amount) - Number(inv.amount_paid || 0)), 0);
+      .reduce((sum, inv) => {
+        const amount = Number(inv.amount) || 0;
+        const paid = Number(inv.amount_paid) || 0;
+        return sum + (amount - paid);
+      }, 0);
     const pendingCount = invoices.filter((inv) => inv.status === 'Pending').length;
     const partialCount = invoices.filter((inv) => inv.status === 'Partial').length;
-    const totalCollected = invoices.reduce((sum, inv) => sum + Number(inv.amount_paid || 0), 0);
+    const totalCollected = invoices.reduce((sum, inv) => sum + (Number(inv.amount_paid) || 0), 0);
 
     return {
       totalCustomers: customers.length,
-      totalOutstanding,
+      totalOutstanding: totalOutstanding || 0,
       overdueCount,
-      overdueAmount,
+      overdueAmount: overdueAmount || 0,
       pendingCount,
       partialCount,
-      totalCollected,
+      totalCollected: totalCollected || 0,
     };
   }, [customers, invoices]);
 
@@ -253,25 +258,8 @@ export default function Dashboard() {
               {filteredCustomers.map((customer) => (
                 <CustomerCard
                   key={customer.id}
-                  customer={{
-                    id: customer.id,
-                    name: customer.name,
-                    contact: customer.contact,
-                    address: customer.address || undefined,
-                    outstandingTotal: Number(customer.outstanding_total),
-                    createdAt: new Date(customer.created_at),
-                  }}
-                  invoices={invoices.map(inv => ({
-                    id: inv.id,
-                    invoiceNumber: inv.invoice_number,
-                    customerId: inv.customer_id,
-                    customerName: '',
-                    issueDate: new Date(inv.issue_date),
-                    dueDate: new Date(inv.due_date),
-                    amount: Number(inv.amount),
-                    status: inv.status,
-                    statementGenerated: inv.statement_generated,
-                  }))}
+                  customer={customer}
+                  invoices={invoices}
                 />
               ))}
             </div>

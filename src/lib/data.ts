@@ -106,11 +106,15 @@ export const mockInvoices: Invoice[] = [
 ];
 
 // Helper functions
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number | null | undefined): string {
+  // Defensive check: ensure we never show NaN
+  const safeAmount = Number(amount) || 0;
+  if (isNaN(safeAmount)) return 'Ksh 0';
+  
   const formatted = new Intl.NumberFormat('en-KE', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(safeAmount);
   return `Ksh ${formatted}`;
 }
 
@@ -129,7 +133,7 @@ export function getCustomerInvoices(customerId: string, invoices: Invoice[]): In
 export function calculateOutstandingTotal(customerId: string, invoices: Invoice[]): number {
   return invoices
     .filter((inv) => inv.customerId === customerId && inv.status !== 'Paid')
-    .reduce((sum, inv) => sum + inv.amount, 0);
+    .reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
 }
 
 export function getPendingInvoicesCount(customerId: string, invoices: Invoice[]): number {
