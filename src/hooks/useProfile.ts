@@ -21,6 +21,9 @@ export const USER_TYPE_LABELS = {
     searchCustomers: 'Search tenants...',
     selectCustomer: 'Select Tenant',
     invoiceDescription: 'Rent Payment',
+    invoices: 'Rent & Debts',
+    addInvoice: 'Add Rent/Debt',
+    invoice: 'Rent/Debt',
   },
   shop_owner: {
     customer: 'Customer',
@@ -36,6 +39,9 @@ export const USER_TYPE_LABELS = {
     searchCustomers: 'Search customers...',
     selectCustomer: 'Select Customer',
     invoiceDescription: 'Invoice Payment',
+    invoices: 'Debts',
+    addInvoice: 'Add Debt',
+    invoice: 'Debt',
   },
 } as const;
 

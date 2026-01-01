@@ -35,8 +35,7 @@ export function MobileBottomNav() {
   const mainNavItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/customers', label: labels.customers, icon: Users },
-    { href: '/invoices', label: 'Invoices', icon: FileText },
-    { href: '/referrals', label: 'Referrals', icon: Gift },
+    { href: '/invoices', label: labels.invoices, icon: FileText },
   ];
   
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
