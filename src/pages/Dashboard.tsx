@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useCustomers, useInvoices, useRecalculateOutstanding } from '@/hooks/useSupabaseData';
 import { useSubscription } from '@/context/SubscriptionContext';
-import { useUserTypeLabels } from '@/hooks/useProfile';
+import { useUserTypeLabels, useProfile } from '@/hooks/useProfile';
 import { formatCurrency } from '@/lib/data';
 import { 
   Users, 
@@ -28,16 +28,32 @@ import { cn } from '@/lib/utils';
 
 type FilterType = 'all' | 'overdue' | 'pending' | 'clear';
 
+// Time-based greeting
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
 export default function Dashboard() {
   const { data: customers = [], isLoading: customersLoading } = useCustomers();
   const { data: invoices = [], isLoading: invoicesLoading } = useInvoices();
   const { subscription, isActive, isTrialing, trialDaysLeft, loading: subscriptionLoading } = useSubscription();
+  const { data: profile } = useProfile();
   const recalculateOutstanding = useRecalculateOutstanding();
   const labels = useUserTypeLabels();
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<FilterType>('all');
 
   const isLoading = customersLoading || invoicesLoading || subscriptionLoading;
+  
+  // Get user's first name (capitalize first letter)
+  const firstName = profile?.name 
+    ? profile.name.split(' ')[0].charAt(0).toUpperCase() + profile.name.split(' ')[0].slice(1).toLowerCase()
+    : 'there';
+  const businessName = profile?.company_name || 'your business';
+  const greeting = getGreeting();
 
   // Recalculate all customer outstanding totals on mount (fixes stale data)
   useEffect(() => {
@@ -123,9 +139,11 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Dashboard</h1>
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+              {greeting}, {firstName}! 👋
+            </h1>
             <p className="mt-1 text-muted-foreground">
-              Track your {labels.customers.toLowerCase()} and outstanding invoices
+              Here's what's happening with <span className="font-medium text-foreground">{businessName}</span> today
             </p>
           </div>
           <div className="flex gap-2">
