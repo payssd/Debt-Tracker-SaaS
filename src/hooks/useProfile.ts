@@ -110,20 +110,43 @@ export function useUpdateProfile() {
     mutationFn: async (updates: Partial<UserProfile>) => {
       if (!user) throw new Error('Not authenticated');
 
-      // Use upsert to handle case where profile doesn't exist yet
-      const { data, error } = await supabase
+      // First check if profile exists
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
-          email: user.email || '',
-          ...updates,
-        }, { onConflict: 'id' })
-        .select()
-        .single();
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      let data, error;
+
+      if (existingProfile) {
+        // Profile exists, update it
+        const result = await supabase
+          .from('profiles')
+          .update(updates)
+          .eq('id', user.id)
+          .select()
+          .single();
+        data = result.data;
+        error = result.error;
+      } else {
+        // Profile doesn't exist, insert it
+        const result = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            email: user.email || '',
+            ...updates,
+          })
+          .select()
+          .single();
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
-        console.error('Error updating profile:', error);
-        throw error;
+        console.error('Error updating profile:', error.message, error.details, error.hint);
+        throw new Error(error.message || 'Failed to save profile');
       }
 
       return data;
