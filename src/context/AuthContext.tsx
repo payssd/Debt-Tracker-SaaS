@@ -29,13 +29,66 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Sync profile data from user metadata on login
+  const syncProfileFromMetadata = async (user: User) => {
+    try {
+      const metadata = user.user_metadata;
+      if (!metadata?.name && !metadata?.company_name) return; // No data to sync
+      
+      // Check if profile exists and needs updating
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, name, company_name')
+        .eq('id', user.id)
+        .maybeSingle();
+      
+      // If profile doesn't have name/company but metadata does, sync it
+      const needsSync = profile && (
+        (!profile.name && metadata?.name) ||
+        (!profile.company_name && metadata?.company_name)
+      );
+      
+      if (!profile) {
+        // Create profile with metadata
+        await supabase.from('profiles').insert({
+          id: user.id,
+          email: user.email || '',
+          name: metadata?.name || null,
+          company_name: metadata?.company_name || null,
+          company_email: metadata?.company_email || user.email || null,
+          company_phone: metadata?.company_phone || null,
+          user_type: metadata?.user_type || 'shop_owner',
+        });
+        console.log('Created profile from signup metadata');
+      } else if (needsSync) {
+        // Update profile with metadata
+        await supabase.from('profiles').update({
+          name: metadata?.name || profile.name,
+          company_name: metadata?.company_name || profile.company_name,
+          company_email: metadata?.company_email || null,
+          company_phone: metadata?.company_phone || null,
+          user_type: metadata?.user_type || 'shop_owner',
+        }).eq('id', user.id);
+        console.log('Synced profile from signup metadata');
+      }
+    } catch (error) {
+      console.error('Failed to sync profile from metadata:', error);
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Sync profile data on login (after email verification)
+        if (event === 'SIGNED_IN' && session?.user) {
+          // Use setTimeout to avoid blocking auth flow
+          setTimeout(() => syncProfileFromMetadata(session.user), 100);
+        }
       }
     );
 
@@ -44,6 +97,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Also sync on initial load if user is logged in
+      if (session?.user) {
+        syncProfileFromMetadata(session.user);
+      }
     });
 
     return () => subscription.unsubscribe();
