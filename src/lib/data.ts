@@ -107,12 +107,11 @@ export const mockInvoices: Invoice[] = [
 
 // Helper functions
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES',
+  const formatted = new Intl.NumberFormat('en-KE', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+  return `Ksh ${formatted}`;
 }
 
 export function formatDate(date: Date): string {
