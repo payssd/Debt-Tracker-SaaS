@@ -172,6 +172,22 @@ export default function Settings() {
     }
   };
 
+  const handleSaveProfile = async () => {
+    try {
+      await updateProfileMutation.mutateAsync({ name: profileForm.name });
+      toast({
+        title: 'Profile saved',
+        description: 'Your profile information has been updated.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to save profile information.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const handleSaveCompanyInfo = async () => {
     try {
       await updateProfileMutation.mutateAsync(companyForm);
@@ -282,6 +298,21 @@ export default function Settings() {
                       : 'Unknown'}
                   </p>
                 </div>
+
+                <Separator />
+
+                <Button
+                  onClick={handleSaveProfile}
+                  disabled={updateProfileMutation.isPending}
+                  className="w-full sm:w-auto"
+                >
+                  {updateProfileMutation.isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  Save Profile
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
