@@ -1,4 +1,18 @@
-export type InvoiceStatus = 'Pending' | 'Paid' | 'Overdue';
+export type InvoiceStatus = 'Pending' | 'Partial' | 'Paid' | 'Overdue';
+
+export type PaymentMethod = 'cash' | 'bank_transfer' | 'mobile_money' | 'card' | 'cheque' | 'other';
+
+export interface Payment {
+  id: string;
+  invoice_id: string;
+  user_id: string;
+  amount: number;
+  payment_date: string;
+  payment_method: PaymentMethod;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Customer {
   id: string;

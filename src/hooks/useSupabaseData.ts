@@ -20,7 +20,8 @@ export interface Invoice {
   issue_date: string;
   due_date: string;
   amount: number;
-  status: 'Pending' | 'Paid' | 'Overdue';
+  amount_paid: number;
+  status: 'Pending' | 'Partial' | 'Paid' | 'Overdue';
   statement_generated: boolean;
   created_at: string;
 }
@@ -387,14 +388,17 @@ export function useUpdateInvoice() {
 }
 
 async function updateCustomerOutstanding(customerId: string) {
-  // Calculate outstanding total (non-Paid invoices)
+  // Calculate outstanding total (invoice amount - amount paid for non-Paid invoices)
   const { data: invoices } = await supabase
     .from('invoices')
-    .select('amount, status')
+    .select('amount, amount_paid, status')
     .eq('customer_id', customerId);
   
   const total = invoices?.reduce((sum, inv) => {
-    return inv.status !== 'Paid' ? sum + Number(inv.amount) : sum;
+    if (inv.status === 'Paid') return sum;
+    // Outstanding = invoice amount - amount paid
+    const balance = Number(inv.amount) - Number(inv.amount_paid || 0);
+    return sum + Math.max(0, balance);
   }, 0) || 0;
   
   await supabase

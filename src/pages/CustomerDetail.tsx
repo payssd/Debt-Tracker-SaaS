@@ -25,6 +25,7 @@ import {
 import { useCustomer, useCustomerInvoices, useUpdateInvoiceStatus, useDeleteCustomer, useDeleteInvoice, Invoice } from '@/hooks/useSupabaseData';
 import { EditCustomerDialog } from '@/components/EditCustomerDialog';
 import { EditInvoiceDialog } from '@/components/EditInvoiceDialog';
+import { RecordPaymentDialog } from '@/components/RecordPaymentDialog';
 import { formatCurrency } from '@/lib/data';
 import { generateInvoicePdf } from '@/lib/invoicePdf';
 import { useProfile } from '@/hooks/useProfile';
@@ -42,6 +43,7 @@ import {
   Trash2,
   Pencil,
   Download,
+  CreditCard,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -59,14 +61,18 @@ export default function CustomerDetail() {
   const [editCustomerOpen, setEditCustomerOpen] = useState(false);
   const [editInvoiceOpen, setEditInvoiceOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [paymentInvoice, setPaymentInvoice] = useState<Invoice | null>(null);
 
   const isLoading = customerLoading || invoicesLoading;
 
   const stats = useMemo(() => {
     const pending = invoices.filter((inv) => inv.status === 'Pending').length;
+    const partial = invoices.filter((inv) => inv.status === 'Partial').length;
     const overdue = invoices.filter((inv) => inv.status === 'Overdue').length;
     const paid = invoices.filter((inv) => inv.status === 'Paid').length;
-    return { pending, overdue, paid };
+    const totalPaid = invoices.reduce((sum, inv) => sum + Number(inv.amount_paid || 0), 0);
+    return { pending, partial, overdue, paid, totalPaid };
   }, [invoices]);
 
   if (isLoading) {
@@ -276,6 +282,8 @@ export default function CustomerDetail() {
                       <TableHead>Issue Date</TableHead>
                       <TableHead>Due Date</TableHead>
                       <TableHead className="text-right">Amount</TableHead>
+                      <TableHead className="text-right hidden sm:table-cell">Paid</TableHead>
+                      <TableHead className="text-right hidden sm:table-cell">Balance</TableHead>
                       <TableHead className="text-center">Status</TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
@@ -291,6 +299,12 @@ export default function CustomerDetail() {
                         <TableCell className="text-right font-medium">
                           {formatCurrency(Number(invoice.amount))}
                         </TableCell>
+                        <TableCell className="text-right hidden sm:table-cell text-green-600">
+                          {formatCurrency(Number(invoice.amount_paid || 0))}
+                        </TableCell>
+                        <TableCell className="text-right hidden sm:table-cell font-medium text-orange-600">
+                          {formatCurrency(Number(invoice.amount) - Number(invoice.amount_paid || 0))}
+                        </TableCell>
                         <TableCell className="text-center">
                           <StatusBadge status={invoice.status} />
                         </TableCell>
@@ -300,12 +314,14 @@ export default function CustomerDetail() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="gap-1 text-status-paid hover:text-status-paid hover:bg-status-paid-bg"
-                                onClick={() => handleMarkPaid(invoice.id)}
-                                disabled={updateInvoiceStatusMutation.isPending}
+                                className="gap-1 text-blue-600 hover:text-blue-600 hover:bg-blue-50"
+                                onClick={() => {
+                                  setPaymentInvoice(invoice);
+                                  setPaymentDialogOpen(true);
+                                }}
                               >
-                                <Check className="h-4 w-4" />
-                                <span className="hidden sm:inline">Paid</span>
+                                <CreditCard className="h-4 w-4" />
+                                <span className="hidden sm:inline">Pay</span>
                               </Button>
                             )}
                             <Button
@@ -383,6 +399,20 @@ export default function CustomerDetail() {
           open={editInvoiceOpen}
           onOpenChange={setEditInvoiceOpen}
         />
+
+        {paymentInvoice && (
+          <RecordPaymentDialog
+            open={paymentDialogOpen}
+            onOpenChange={setPaymentDialogOpen}
+            invoice={{
+              id: paymentInvoice.id,
+              invoice_number: paymentInvoice.invoice_number,
+              amount: paymentInvoice.amount,
+              amount_paid: paymentInvoice.amount_paid || 0,
+              customer_name: customer?.name,
+            }}
+          />
+        )}
       </div>
     </Layout>
   );

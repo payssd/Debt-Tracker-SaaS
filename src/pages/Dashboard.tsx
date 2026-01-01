@@ -43,8 +43,10 @@ export default function Dashboard() {
     const overdueCount = invoices.filter((inv) => inv.status === 'Overdue').length;
     const overdueAmount = invoices
       .filter((inv) => inv.status === 'Overdue')
-      .reduce((sum, inv) => sum + Number(inv.amount), 0);
+      .reduce((sum, inv) => sum + (Number(inv.amount) - Number(inv.amount_paid || 0)), 0);
     const pendingCount = invoices.filter((inv) => inv.status === 'Pending').length;
+    const partialCount = invoices.filter((inv) => inv.status === 'Partial').length;
+    const totalCollected = invoices.reduce((sum, inv) => sum + Number(inv.amount_paid || 0), 0);
 
     return {
       totalCustomers: customers.length,
@@ -52,6 +54,8 @@ export default function Dashboard() {
       overdueCount,
       overdueAmount,
       pendingCount,
+      partialCount,
+      totalCollected,
     };
   }, [customers, invoices]);
 

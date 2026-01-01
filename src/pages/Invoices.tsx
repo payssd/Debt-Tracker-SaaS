@@ -33,11 +33,12 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useInvoices, useUpdateInvoiceStatus, useCustomers, useDeleteInvoice, useBulkDeleteInvoices, useBulkUpdateInvoiceStatus, Invoice } from '@/hooks/useSupabaseData';
 import { EditInvoiceDialog } from '@/components/EditInvoiceDialog';
+import { RecordPaymentDialog } from '@/components/RecordPaymentDialog';
 import { formatCurrency } from '@/lib/data';
 import { generateInvoicePdf } from '@/lib/invoicePdf';
 import { useProfile } from '@/hooks/useProfile';
 import { format } from 'date-fns';
-import { FileText, Plus, Search, Check, Loader2, Trash2, Pencil, X, Download } from 'lucide-react';
+import { FileText, Plus, Search, Check, Loader2, Trash2, Pencil, X, Download, CreditCard } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { InvoiceStatus } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -59,6 +60,8 @@ export default function Invoices() {
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [paymentInvoice, setPaymentInvoice] = useState<Invoice | null>(null);
 
   const getCustomerName = (customerId: string) => {
     const customer = customers.find(c => c.id === customerId);
@@ -306,6 +309,7 @@ export default function Invoices() {
                   <SelectContent>
                     <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Partial">Partial</SelectItem>
                     <SelectItem value="Overdue">Overdue</SelectItem>
                     <SelectItem value="Paid">Paid</SelectItem>
                   </SelectContent>
@@ -330,6 +334,8 @@ export default function Invoices() {
                       <TableHead className="hidden sm:table-cell">Issue Date</TableHead>
                       <TableHead>Due Date</TableHead>
                       <TableHead className="text-right">Amount</TableHead>
+                      <TableHead className="text-right hidden md:table-cell">Paid</TableHead>
+                      <TableHead className="text-right hidden md:table-cell">Balance</TableHead>
                       <TableHead className="text-center">Status</TableHead>
                       <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
@@ -354,6 +360,12 @@ export default function Invoices() {
                         <TableCell className="text-right font-medium">
                           {formatCurrency(Number(invoice.amount))}
                         </TableCell>
+                        <TableCell className="text-right hidden md:table-cell text-green-600">
+                          {formatCurrency(Number(invoice.amount_paid || 0))}
+                        </TableCell>
+                        <TableCell className="text-right hidden md:table-cell font-medium text-orange-600">
+                          {formatCurrency(Number(invoice.amount) - Number(invoice.amount_paid || 0))}
+                        </TableCell>
                         <TableCell className="text-center">
                           <StatusBadge status={invoice.status} />
                         </TableCell>
@@ -363,12 +375,14 @@ export default function Invoices() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="gap-1 text-status-paid hover:text-status-paid hover:bg-status-paid-bg"
-                                onClick={() => handleMarkPaid(invoice.id)}
-                                disabled={updateInvoiceStatusMutation.isPending}
+                                className="gap-1 text-blue-600 hover:text-blue-600 hover:bg-blue-50"
+                                onClick={() => {
+                                  setPaymentInvoice(invoice);
+                                  setPaymentDialogOpen(true);
+                                }}
                               >
-                                <Check className="h-4 w-4" />
-                                <span className="hidden sm:inline">Paid</span>
+                                <CreditCard className="h-4 w-4" />
+                                <span className="hidden sm:inline">Pay</span>
                               </Button>
                             )}
                             <Button
@@ -444,6 +458,20 @@ export default function Invoices() {
           open={editInvoiceOpen}
           onOpenChange={setEditInvoiceOpen}
         />
+
+        {paymentInvoice && (
+          <RecordPaymentDialog
+            open={paymentDialogOpen}
+            onOpenChange={setPaymentDialogOpen}
+            invoice={{
+              id: paymentInvoice.id,
+              invoice_number: paymentInvoice.invoice_number,
+              amount: paymentInvoice.amount,
+              amount_paid: paymentInvoice.amount_paid || 0,
+              customer_name: getCustomerName(paymentInvoice.customer_id),
+            }}
+          />
+        )}
       </div>
     </Layout>
   );
