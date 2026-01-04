@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import ScrollReveal from "@/components/ScrollReveal";
 import PaymentCallbackHandler from "@/components/PaymentCallbackHandler";
+import HowItWorksDemo from "@/components/HowItWorksDemo";
 import { 
   LayoutDashboard, 
   Users, 
@@ -29,6 +31,8 @@ import {
 } from "lucide-react";
 
 const LandingPage = () => {
+  const [showDemo, setShowDemo] = useState(false);
+
   const features = [
     {
       icon: LayoutDashboard,
@@ -237,12 +241,15 @@ const LandingPage = () => {
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                  <a href="#how-it-works">
-                    <Button size="lg" variant="outline" className="text-lg px-8 py-6 font-semibold hover:bg-accent/5">
-                      <Play className="mr-2 h-5 w-5" />
-                      See How It Works
-                    </Button>
-                  </a>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="text-lg px-8 py-6 font-semibold hover:bg-accent/5"
+                    onClick={() => setShowDemo(true)}
+                  >
+                    <Play className="mr-2 h-5 w-5" />
+                    See How It Works
+                  </Button>
                 </div>
               </ScrollReveal>
 
@@ -805,6 +812,9 @@ const LandingPage = () => {
           </ScrollReveal>
         </div>
       </footer>
+
+      {/* How It Works Demo Modal */}
+      <HowItWorksDemo isOpen={showDemo} onClose={() => setShowDemo(false)} />
     </div>
   );
 };
