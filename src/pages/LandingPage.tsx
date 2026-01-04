@@ -183,7 +183,7 @@ const LandingPage = () => {
           </div>
         </div>
         
-        <div className="absolute bottom-40 left-[10%] hidden lg:block animate-bounce delay-700">
+        <div className="absolute top-48 left-[5%] hidden xl:block animate-bounce delay-700">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4 border border-accent/20">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
