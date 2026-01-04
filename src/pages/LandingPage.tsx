@@ -161,41 +161,176 @@ const LandingPage = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
-        <div className="container relative py-20 md:py-32">
-          <div className="mx-auto max-w-4xl text-center">
-            <ScrollReveal>
-              <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-                Stop Chasing Late Rent & Shop Payments — 
-                <span className="text-accent"> Track, Remind, and Get Paid on Time!</span>
-              </h1>
-            </ScrollReveal>
-            <ScrollReveal delay={0.1}>
-              <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                The simplest tool for Kenyan landlords and shop owners to track unpaid rent and customer debts, generate statements, and send WhatsApp reminders — in just 30 seconds.
-              </p>
-            </ScrollReveal>
-            <ScrollReveal delay={0.2}>
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/dashboard">
-                  <Button size="lg" className="text-lg px-8 py-6 font-semibold shadow-lg hover:shadow-xl transition-all">
-                    Start Free 7-Day Trial
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <a href="#how-it-works">
-                  <Button size="lg" variant="outline" className="text-lg px-8 py-6 font-semibold">
-                    <Play className="mr-2 h-5 w-5" />
-                    How It Works
-                  </Button>
-                </a>
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-background to-accent/5" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-accent/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/15 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl" />
+        
+        {/* Floating Elements */}
+        <div className="absolute top-32 right-[15%] hidden lg:block animate-bounce delay-300">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4 border border-accent/20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-white" />
               </div>
-            </ScrollReveal>
-            <ScrollReveal delay={0.3}>
-              <p className="mt-4 text-sm text-muted-foreground">
-                No credit card required — start getting paid faster today.
-              </p>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Payment Received!</p>
+                <p className="text-xs text-muted-foreground">Ksh 15,000 from John</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="absolute bottom-40 left-[10%] hidden lg:block animate-bounce delay-700">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4 border border-accent/20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">Reminder Sent</p>
+                <p className="text-xs text-muted-foreground">via WhatsApp</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="container relative z-10 py-16 md:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="text-center lg:text-left">
+              {/* Social Proof Badge */}
+              <ScrollReveal>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-6">
+                  <div className="flex -space-x-2">
+                    <div className="w-6 h-6 rounded-full bg-accent/80 border-2 border-white flex items-center justify-center text-[10px] font-bold text-white">M</div>
+                    <div className="w-6 h-6 rounded-full bg-primary border-2 border-white flex items-center justify-center text-[10px] font-bold text-white">J</div>
+                    <div className="w-6 h-6 rounded-full bg-accent border-2 border-white flex items-center justify-center text-[10px] font-bold text-white">G</div>
+                  </div>
+                  <span className="text-sm font-medium text-foreground">
+                    Join <span className="text-accent font-bold">500+</span> Kenyan landlords
+                  </span>
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.1}>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground leading-tight">
+                  Get Paid <span className="text-accent">On Time,</span>
+                  <br />
+                  Every Time
+                </h1>
+              </ScrollReveal>
+              
+              <ScrollReveal delay={0.2}>
+                <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0">
+                  Track rent & debts, send WhatsApp reminders, and generate professional statements — all in <span className="font-semibold text-accent">30 seconds</span>.
+                </p>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.3}>
+                <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
+                  <Link to="/dashboard">
+                    <Button size="lg" className="text-lg px-8 py-6 font-semibold shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/30 transition-all hover:scale-105">
+                      Start Free Trial
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                  <a href="#how-it-works">
+                    <Button size="lg" variant="outline" className="text-lg px-8 py-6 font-semibold hover:bg-accent/5">
+                      <Play className="mr-2 h-5 w-5" />
+                      See How It Works
+                    </Button>
+                  </a>
+                </div>
+              </ScrollReveal>
+
+              <ScrollReveal delay={0.4}>
+                <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                    No credit card
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                    7-day free trial
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 text-accent" />
+                    Cancel anytime
+                  </span>
+                </div>
+              </ScrollReveal>
+            </div>
+
+            {/* Right - Dashboard Mockup */}
+            <ScrollReveal delay={0.3} direction="right">
+              <div className="relative lg:block">
+                {/* Main Dashboard Preview */}
+                <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl shadow-accent/20 border border-accent/10 overflow-hidden">
+                  {/* Browser Header */}
+                  <div className="flex items-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-400" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                      <div className="w-3 h-3 rounded-full bg-green-400" />
+                    </div>
+                    <div className="flex-1 mx-4">
+                      <div className="bg-white dark:bg-slate-700 rounded-md px-3 py-1 text-xs text-muted-foreground text-center">
+                        debttracker.app/dashboard
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Dashboard Content */}
+                  <div className="p-6 space-y-4">
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-accent/10 rounded-xl p-4 text-center">
+                        <p className="text-2xl font-bold text-accent">12</p>
+                        <p className="text-xs text-muted-foreground">Customers</p>
+                      </div>
+                      <div className="bg-red-500/10 rounded-xl p-4 text-center">
+                        <p className="text-2xl font-bold text-red-500">3</p>
+                        <p className="text-xs text-muted-foreground">Overdue</p>
+                      </div>
+                      <div className="bg-green-500/10 rounded-xl p-4 text-center">
+                        <p className="text-2xl font-bold text-green-500">Ksh 45k</p>
+                        <p className="text-xs text-muted-foreground">Collected</p>
+                      </div>
+                    </div>
+                    
+                    {/* Customer List Preview */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">JK</div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">John Kamau</p>
+                            <p className="text-xs text-muted-foreground">Room 5A</p>
+                          </div>
+                        </div>
+                        <span className="text-sm font-semibold text-red-500">Ksh 15,000</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-xs font-bold text-green-600">MW</div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">Mary Wanjiku</p>
+                            <p className="text-xs text-muted-foreground">Shop 12</p>
+                          </div>
+                        </div>
+                        <span className="text-sm font-semibold text-green-500">Paid ✓</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Decorative Elements */}
+                <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-accent/20 rounded-2xl blur-xl" />
+                <div className="absolute -top-4 -left-4 w-16 h-16 bg-accent/30 rounded-xl blur-lg" />
+              </div>
             </ScrollReveal>
           </div>
         </div>
