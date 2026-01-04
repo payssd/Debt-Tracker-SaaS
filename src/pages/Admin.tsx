@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,6 +19,7 @@ import {
   useRecentActivity,
 } from '@/hooks/useAdmin';
 import { useAdminAuth } from '@/context/AdminAuthContext';
+import { AdminLayout } from '@/components/AdminLayout';
 import { useToast } from '@/hooks/use-toast';
 import {
   Loader2,
@@ -37,21 +37,24 @@ import {
   Phone,
   Shield,
   RefreshCw,
-  LogOut,
-  Settings,
   Key,
+  FileText,
+  Sparkles,
+  ArrowUpRight,
+  ArrowDownRight,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Admin() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { admin, loading: adminLoading, logout, changePassword } = useAdminAuth();
-  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = usePlatformStats();
+  const { admin, loading: adminLoading, changePassword } = useAdminAuth();
+  const { data: stats, isLoading: statsLoading } = usePlatformStats();
   const { data: funnelStats, isLoading: funnelLoading } = useFunnelStatsAdmin();
   const { data: allUsers, isLoading: usersLoading } = useAllUsers();
   const { data: recentActivity, isLoading: activityLoading } = useRecentActivity(30);
 
+  const [activeTab, setActiveTab] = useState('overview');
   const [userSearch, setUserSearch] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -60,22 +63,23 @@ export default function Admin() {
 
   if (adminLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <Loader2 className="h-8 w-8 animate-spin text-white" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-2xl shadow-indigo-500/30 animate-pulse">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+        </div>
       </div>
     );
   }
 
   if (!admin) {
-    // Redirect to admin login
     navigate('/admin/login', { replace: true });
     return null;
   }
-
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login', { replace: true });
-  };
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -160,391 +164,385 @@ export default function Admin() {
     return `Ksh ${formatted}`;
   };
 
-  return (
-    <div className="min-h-screen bg-slate-900">
-      {/* Admin Header */}
-      <header className="sticky top-0 z-50 border-b border-slate-700 bg-slate-800/95 backdrop-blur">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-white">Admin Dashboard</h1>
-              <p className="text-xs text-slate-400">{admin.email}</p>
-            </div>
+  // 3D Card Component
+  const StatCard = ({ title, value, subtitle, icon: Icon, gradient, trend }: {
+    title: string;
+    value: string | number;
+    subtitle?: string;
+    icon: any;
+    gradient: string;
+    trend?: { value: number; positive: boolean };
+  }) => (
+    <div className="group relative">
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500" />
+      <div className="relative bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 backdrop-blur-sm transition-all duration-300 hover:translate-y-[-4px] hover:shadow-2xl">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</p>
+            <p className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+              {value}
+            </p>
+            {subtitle && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                {trend && (
+                  <span className={`flex items-center ${trend.positive ? 'text-emerald-500' : 'text-red-500'}`}>
+                    {trend.positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                    {trend.value}%
+                  </span>
+                )}
+                {subtitle}
+              </p>
+            )}
           </div>
-          <div className="flex items-center gap-2">
-            <Button onClick={() => refetchStats()} variant="outline" size="sm" className="gap-2 border-slate-600 text-slate-300 hover:bg-slate-700">
-              <RefreshCw className="h-4 w-4" />
-              Refresh
-            </Button>
-            <Button onClick={handleLogout} variant="destructive" size="sm" className="gap-2">
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
+          <div className={`p-3 rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}>
+            <Icon className="h-6 w-6 text-white" />
           </div>
         </div>
-      </header>
+      </div>
+    </div>
+  );
 
-      <main className="container px-4 py-6">
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  // Render Overview Tab
+  const renderOverview = () => (
+    <div className="space-y-6 animate-fade-in">
+      {/* Welcome Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-8 shadow-2xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="h-5 w-5 text-yellow-300" />
+            <span className="text-sm font-medium text-white/80">Admin Dashboard</span>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">Welcome back, Admin! 👋</h1>
+          <p className="text-white/80">Here's what's happening on your platform today</p>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      {statsLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+        </div>
+      ) : stats ? (
+        <>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              title="Total Users"
+              value={stats.total_users}
+              subtitle={`+${stats.new_users_today} today`}
+              icon={Users}
+              gradient="from-blue-500 to-cyan-500"
+              trend={{ value: stats.new_users_week, positive: true }}
+            />
+            <StatCard
+              title="Active Trials"
+              value={stats.active_trials}
+              subtitle="Users in 7-day trial"
+              icon={Clock}
+              gradient="from-violet-500 to-purple-500"
+            />
+            <StatCard
+              title="Paid Subscriptions"
+              value={stats.active_subscriptions}
+              subtitle={`${stats.conversion_rate}% conversion`}
+              icon={Crown}
+              gradient="from-emerald-500 to-green-500"
+              trend={{ value: Number(stats.conversion_rate), positive: true }}
+            />
+            <StatCard
+              title="Churned Users"
+              value={stats.churned_users}
+              subtitle="Expired or canceled"
+              icon={XCircle}
+              gradient="from-red-500 to-rose-500"
+            />
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-3">
+            <StatCard
+              title="Total Customers"
+              value={stats.total_customers}
+              subtitle="Across all users"
+              icon={Users}
+              gradient="from-indigo-500 to-blue-500"
+            />
+            <StatCard
+              title="Total Invoices"
+              value={stats.total_invoices}
+              subtitle="Created on platform"
+              icon={FileText}
+              gradient="from-amber-500 to-orange-500"
+            />
+            <StatCard
+              title="Outstanding Amount"
+              value={formatCurrency(stats.total_outstanding)}
+              subtitle="Pending collection"
+              icon={DollarSign}
+              gradient="from-pink-500 to-rose-500"
+            />
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+
+  // Render Users Tab
+  const renderUsers = () => (
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-white">Platform Overview</h1>
-              <Badge variant="outline" className="gap-1 border-slate-600 text-slate-300">
-                <Shield className="h-3 w-3" />
-                {admin.role}
-              </Badge>
-            </div>
-            <p className="mt-1 text-slate-400">Platform-wide analytics and user management</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">All Users</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">View and manage all platform users</p>
           </div>
+          <Input
+            placeholder="Search by email or name..."
+            value={userSearch}
+            onChange={(e) => setUserSearch(e.target.value)}
+            className="max-w-sm"
+          />
         </div>
-
-        {statsLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin" />
+        {usersLoading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
           </div>
-        ) : stats ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.total_users}</div>
-                <p className="text-xs text-muted-foreground">
-                  +{stats.new_users_today} today, +{stats.new_users_week} this week
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Active Trials</CardTitle>
-                <Clock className="h-4 w-4 text-blue-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-500">{stats.active_trials}</div>
-                <p className="text-xs text-muted-foreground">Users in 7-day trial</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Paid Subscriptions</CardTitle>
-                <Crown className="h-4 w-4 text-green-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-500">{stats.active_subscriptions}</div>
-                <p className="text-xs text-muted-foreground">{stats.conversion_rate}% conversion rate</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Churned</CardTitle>
-                <XCircle className="h-4 w-4 text-red-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-red-500">{stats.churned_users}</div>
-                <p className="text-xs text-muted-foreground">Expired or canceled</p>
-              </CardContent>
-            </Card>
-          </div>
-        ) : null}
-
-        {stats && (
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.total_customers}</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Total Invoices</CardTitle>
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.total_invoices}</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Outstanding Amount</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{formatCurrency(stats.total_outstanding)}</div>
-              </CardContent>
-            </Card>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>User</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Plan</TableHead>
+                  <TableHead>Customers</TableHead>
+                  <TableHead>Invoices</TableHead>
+                  <TableHead>Outstanding</TableHead>
+                  <TableHead>Joined</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers?.map((user) => (
+                  <TableRow key={user.user_id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{user.name}</p>
+                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(user.subscription_status)}</TableCell>
+                    <TableCell>{user.plan_name || '-'}</TableCell>
+                    <TableCell>{user.customer_count}</TableCell>
+                    <TableCell>{user.invoice_count}</TableCell>
+                    <TableCell>{formatCurrency(user.outstanding_total)}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
-
-        <Tabs defaultValue="users" className="space-y-4">
-          <TabsList className="bg-slate-800 border-slate-700">
-            <TabsTrigger value="users" className="gap-2 data-[state=active]:bg-slate-700">
-              <Users className="h-4 w-4" />
-              Users
-            </TabsTrigger>
-            <TabsTrigger value="funnel" className="gap-2 data-[state=active]:bg-slate-700">
-              <TrendingUp className="h-4 w-4" />
-              Funnel Stats
-            </TabsTrigger>
-            <TabsTrigger value="activity" className="gap-2 data-[state=active]:bg-slate-700">
-              <Activity className="h-4 w-4" />
-              Recent Activity
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-2 data-[state=active]:bg-slate-700">
-              <Settings className="h-4 w-4" />
-              Settings
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle>All Users</CardTitle>
-                <CardDescription>View and manage all platform users</CardDescription>
-                <div className="pt-2">
-                  <Input
-                    placeholder="Search by email or name..."
-                    value={userSearch}
-                    onChange={(e) => setUserSearch(e.target.value)}
-                    className="max-w-sm"
-                  />
-                </div>
-              </CardHeader>
-              <CardContent>
-                {usersLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>User</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Plan</TableHead>
-                          <TableHead>Customers</TableHead>
-                          <TableHead>Invoices</TableHead>
-                          <TableHead>Outstanding</TableHead>
-                          <TableHead>Joined</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredUsers?.map((user) => (
-                          <TableRow key={user.user_id}>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">{user.name}</p>
-                                <p className="text-xs text-muted-foreground">{user.email}</p>
-                              </div>
-                            </TableCell>
-                            <TableCell>{getStatusBadge(user.subscription_status)}</TableCell>
-                            <TableCell>{user.plan_name || '-'}</TableCell>
-                            <TableCell>{user.customer_count}</TableCell>
-                            <TableCell>{user.invoice_count}</TableCell>
-                            <TableCell>{formatCurrency(user.outstanding_total)}</TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {new Date(user.created_at).toLocaleDateString()}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="funnel">
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Funnel Messages by Day</CardTitle>
-                  <CardDescription>Users reached at each funnel step</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {funnelLoading ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                    </div>
-                  ) : funnelStats?.by_day && funnelStats.by_day.length > 0 ? (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Day</TableHead>
-                          <TableHead>Users</TableHead>
-                          <TableHead><MessageSquare className="h-4 w-4 text-[#25D366]" /></TableHead>
-                          <TableHead><Mail className="h-4 w-4 text-blue-500" /></TableHead>
-                          <TableHead><Phone className="h-4 w-4 text-purple-500" /></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {funnelStats.by_day.map((day) => (
-                          <TableRow key={day.day_number}>
-                            <TableCell className="font-medium">Day {day.day_number}</TableCell>
-                            <TableCell>{day.users_count}</TableCell>
-                            <TableCell>{day.whatsapp_sent}</TableCell>
-                            <TableCell>{day.email_sent}</TableCell>
-                            <TableCell>{day.sms_sent}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  ) : (
-                    <p className="text-center text-muted-foreground py-8">No funnel data yet</p>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Total Messages Sent</CardTitle>
-                  <CardDescription>Across all channels</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {funnelStats?.total_messages_sent ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-[#25D366]/10">
-                        <div className="flex items-center gap-3">
-                          <MessageSquare className="h-6 w-6 text-[#25D366]" />
-                          <span className="font-medium">WhatsApp</span>
-                        </div>
-                        <span className="text-2xl font-bold">{funnelStats.total_messages_sent.whatsapp}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-blue-500/10">
-                        <div className="flex items-center gap-3">
-                          <Mail className="h-6 w-6 text-blue-500" />
-                          <span className="font-medium">Email</span>
-                        </div>
-                        <span className="text-2xl font-bold">{funnelStats.total_messages_sent.email}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-purple-500/10">
-                        <div className="flex items-center gap-3">
-                          <Phone className="h-6 w-6 text-purple-500" />
-                          <span className="font-medium">SMS</span>
-                        </div>
-                        <span className="text-2xl font-bold">{funnelStats.total_messages_sent.sms}</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-center text-muted-foreground py-8">No messages sent yet</p>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="activity">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest platform events</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {activityLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : recentActivity && recentActivity.length > 0 ? (
-                  <div className="space-y-3">
-                    {recentActivity.map((activity, index) => (
-                      <div key={index} className="flex items-center gap-4 p-3 rounded-lg border bg-card">
-                        {getActivityIcon(activity.activity_type)}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{activity.description}</p>
-                          <p className="text-xs text-muted-foreground truncate">{activity.user_email}</p>
-                        </div>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {new Date(activity.created_at).toLocaleString()}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-muted-foreground py-8">No recent activity</p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Key className="h-5 w-5" />
-                  Change Password
-                </CardTitle>
-                <CardDescription>Update your admin account password</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 max-w-md">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input
-                    id="current-password"
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter current password"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                  />
-                </div>
-                <Button 
-                  onClick={handleChangePassword} 
-                  disabled={changingPassword || !currentPassword || !newPassword || !confirmPassword}
-                  className="w-full"
-                >
-                  {changingPassword ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Changing...
-                    </>
-                  ) : (
-                    <>
-                      <Key className="mr-2 h-4 w-4" />
-                      Change Password
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
       </div>
-      </main>
     </div>
+  );
+
+  // Render Funnel Tab
+  const renderFunnel = () => (
+    <div className="grid gap-6 lg:grid-cols-2">
+      <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Funnel Messages by Day</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Users reached at each funnel step</p>
+        {funnelLoading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+          </div>
+        ) : funnelStats?.by_day && funnelStats.by_day.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Day</TableHead>
+                <TableHead>Users</TableHead>
+                <TableHead><MessageSquare className="h-4 w-4 text-[#25D366]" /></TableHead>
+                <TableHead><Mail className="h-4 w-4 text-blue-500" /></TableHead>
+                <TableHead><Phone className="h-4 w-4 text-purple-500" /></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {funnelStats.by_day.map((day) => (
+                <TableRow key={day.day_number}>
+                  <TableCell className="font-medium">Day {day.day_number}</TableCell>
+                  <TableCell>{day.users_count}</TableCell>
+                  <TableCell>{day.whatsapp_sent}</TableCell>
+                  <TableCell>{day.email_sent}</TableCell>
+                  <TableCell>{day.sms_sent}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-center text-slate-500 py-12">No funnel data yet</p>
+        )}
+      </div>
+
+      <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Total Messages Sent</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Across all channels</p>
+        {funnelStats?.total_messages_sent ? (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-[#25D366]/10 to-[#25D366]/5 border border-[#25D366]/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-[#25D366]">
+                  <MessageSquare className="h-5 w-5 text-white" />
+                </div>
+                <span className="font-medium">WhatsApp</span>
+              </div>
+              <span className="text-2xl font-bold">{funnelStats.total_messages_sent.whatsapp}</span>
+            </div>
+            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-blue-500/10 to-blue-500/5 border border-blue-500/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-500">
+                  <Mail className="h-5 w-5 text-white" />
+                </div>
+                <span className="font-medium">Email</span>
+              </div>
+              <span className="text-2xl font-bold">{funnelStats.total_messages_sent.email}</span>
+            </div>
+            <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-purple-500/5 border border-purple-500/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-purple-500">
+                  <Phone className="h-5 w-5 text-white" />
+                </div>
+                <span className="font-medium">SMS</span>
+              </div>
+              <span className="text-2xl font-bold">{funnelStats.total_messages_sent.sms}</span>
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-slate-500 py-12">No messages sent yet</p>
+        )}
+      </div>
+    </div>
+  );
+
+  // Render Activity Tab
+  const renderActivity = () => (
+    <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Recent Activity</h2>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Latest platform events</p>
+      {activityLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+        </div>
+      ) : recentActivity && recentActivity.length > 0 ? (
+        <div className="space-y-3">
+          {recentActivity.map((activity, index) => (
+            <div key={index} className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors">
+              <div className="p-2 rounded-lg bg-white dark:bg-slate-600 shadow-sm">
+                {getActivityIcon(activity.activity_type)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">{activity.description}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{activity.user_email}</p>
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                {new Date(activity.created_at).toLocaleString()}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-slate-500 py-12">No recent activity</p>
+      )}
+    </div>
+  );
+
+  // Render Settings Tab
+  const renderSettings = () => (
+    <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/50 max-w-md">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500">
+          <Key className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Change Password</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Update your admin account password</p>
+        </div>
+      </div>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="current-password">Current Password</Label>
+          <Input
+            id="current-password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder="Enter current password"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="new-password">New Password</Label>
+          <Input
+            id="new-password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="Enter new password"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password">Confirm New Password</Label>
+          <Input
+            id="confirm-password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm new password"
+          />
+        </div>
+        <Button 
+          onClick={handleChangePassword} 
+          disabled={changingPassword || !currentPassword || !newPassword || !confirmPassword}
+          className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600"
+        >
+          {changingPassword ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Changing...
+            </>
+          ) : (
+            <>
+              <Key className="mr-2 h-4 w-4" />
+              Change Password
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+
+  // Render content based on active tab
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return renderOverview();
+      case 'users':
+        return renderUsers();
+      case 'funnel':
+        return renderFunnel();
+      case 'activity':
+        return renderActivity();
+      case 'settings':
+        return renderSettings();
+      default:
+        return renderOverview();
+    }
+  };
+
+  return (
+    <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      {renderContent()}
+    </AdminLayout>
   );
 }
