@@ -75,8 +75,8 @@ const Contact = () => {
                       <p className="text-muted-foreground text-sm mb-2">
                         Quick responses during business hours
                       </p>
-                      <a href="https://wa.me/254700000000" className="text-accent hover:underline">
-                        +254 700 000 000
+                      <a href="https://wa.me/254748188128" className="text-accent hover:underline">
+                        +254 748 188 128
                       </a>
                     </div>
                   </div>

@@ -369,7 +369,7 @@ export default function Settings() {
                       onChange={(e) =>
                         setCompanyForm((prev) => ({ ...prev, company_phone: e.target.value }))
                       }
-                      placeholder="+254 700 000000"
+                      placeholder="+254 748 188 128"
                     />
                   </div>
                   <div className="space-y-2">
