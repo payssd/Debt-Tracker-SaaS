@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Table,
   TableBody,
@@ -14,13 +14,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  useIsAdmin,
-  useAdminRole,
   usePlatformStats,
   useFunnelStatsAdmin,
   useAllUsers,
   useRecentActivity,
 } from '@/hooks/useAdmin';
+import { useAdminAuth } from '@/context/AdminAuthContext';
+import { useToast } from '@/hooks/use-toast';
 import {
   Loader2,
   Users,
@@ -37,42 +37,85 @@ import {
   Phone,
   Shield,
   RefreshCw,
+  LogOut,
+  Settings,
+  Key,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Admin() {
   const navigate = useNavigate();
-  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
-  const { data: adminRole } = useAdminRole();
+  const { toast } = useToast();
+  const { admin, loading: adminLoading, logout, changePassword } = useAdminAuth();
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = usePlatformStats();
   const { data: funnelStats, isLoading: funnelLoading } = useFunnelStatsAdmin();
   const { data: allUsers, isLoading: usersLoading } = useAllUsers();
   const { data: recentActivity, isLoading: activityLoading } = useRecentActivity(30);
 
   const [userSearch, setUserSearch] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
 
   if (adminLoading) {
     return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Layout>
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <Loader2 className="h-8 w-8 animate-spin text-white" />
+      </div>
     );
   }
 
-  if (!isAdmin) {
-    return (
-      <Layout>
-        <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-          <Shield className="h-16 w-16 text-muted-foreground" />
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground">You don't have admin privileges.</p>
-          <Button onClick={() => navigate('/dashboard')}>Go to Dashboard</Button>
-        </div>
-      </Layout>
-    );
+  if (!admin) {
+    // Redirect to admin login
+    navigate('/admin/login', { replace: true });
+    return null;
   }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login', { replace: true });
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: 'Error',
+        description: 'New passwords do not match',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (newPassword.length < 4) {
+      toast({
+        title: 'Error',
+        description: 'Password must be at least 4 characters',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setChangingPassword(true);
+    const { error } = await changePassword(currentPassword, newPassword);
+    setChangingPassword(false);
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Success',
+        description: 'Password changed successfully',
+      });
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  };
 
   const filteredUsers = allUsers?.filter(
     (user) =>
@@ -118,23 +161,45 @@ export default function Admin() {
   };
 
   return (
-    <Layout>
+    <div className="min-h-screen bg-slate-900">
+      {/* Admin Header */}
+      <header className="sticky top-0 z-50 border-b border-slate-700 bg-slate-800/95 backdrop-blur">
+        <div className="container flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-white">Admin Dashboard</h1>
+              <p className="text-xs text-slate-400">{admin.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button onClick={() => refetchStats()} variant="outline" size="sm" className="gap-2 border-slate-600 text-slate-300 hover:bg-slate-700">
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </Button>
+            <Button onClick={handleLogout} variant="destructive" size="sm" className="gap-2">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="container px-4 py-6">
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Admin Dashboard</h1>
-              <Badge variant="outline" className="gap-1">
+              <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-white">Platform Overview</h1>
+              <Badge variant="outline" className="gap-1 border-slate-600 text-slate-300">
                 <Shield className="h-3 w-3" />
-                {adminRole}
+                {admin.role}
               </Badge>
             </div>
-            <p className="mt-1 text-muted-foreground">Platform-wide analytics and user management</p>
+            <p className="mt-1 text-slate-400">Platform-wide analytics and user management</p>
           </div>
-          <Button onClick={() => refetchStats()} variant="outline" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </Button>
         </div>
 
         {statsLoading ? (
@@ -226,18 +291,22 @@ export default function Admin() {
         )}
 
         <Tabs defaultValue="users" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="users" className="gap-2">
+          <TabsList className="bg-slate-800 border-slate-700">
+            <TabsTrigger value="users" className="gap-2 data-[state=active]:bg-slate-700">
               <Users className="h-4 w-4" />
               Users
             </TabsTrigger>
-            <TabsTrigger value="funnel" className="gap-2">
+            <TabsTrigger value="funnel" className="gap-2 data-[state=active]:bg-slate-700">
               <TrendingUp className="h-4 w-4" />
               Funnel Stats
             </TabsTrigger>
-            <TabsTrigger value="activity" className="gap-2">
+            <TabsTrigger value="activity" className="gap-2 data-[state=active]:bg-slate-700">
               <Activity className="h-4 w-4" />
               Recent Activity
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2 data-[state=active]:bg-slate-700">
+              <Settings className="h-4 w-4" />
+              Settings
             </TabsTrigger>
           </TabsList>
 
@@ -412,8 +481,70 @@ export default function Admin() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="settings">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Key className="h-5 w-5" />
+                  Change Password
+                </CardTitle>
+                <CardDescription>Update your admin account password</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 max-w-md">
+                <div className="space-y-2">
+                  <Label htmlFor="current-password">Current Password</Label>
+                  <Input
+                    id="current-password"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">New Password</Label>
+                  <Input
+                    id="new-password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm New Password</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                  />
+                </div>
+                <Button 
+                  onClick={handleChangePassword} 
+                  disabled={changingPassword || !currentPassword || !newPassword || !confirmPassword}
+                  className="w-full"
+                >
+                  {changingPassword ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Changing...
+                    </>
+                  ) : (
+                    <>
+                      <Key className="mr-2 h-4 w-4" />
+                      Change Password
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+      </main>
+    </div>
   );
 }

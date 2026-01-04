@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/context/AuthContext";
+import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import { DataProvider } from "@/context/DataContext";
 import { SubscriptionProvider } from "@/context/SubscriptionContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -62,8 +63,8 @@ const App = () => (
                   <Route path="/reminders" element={<ProtectedRoute><SubscriptionGuard><Reminders /></SubscriptionGuard></ProtectedRoute>} />
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   <Route path="/funnel" element={<ProtectedRoute><Funnel /></ProtectedRoute>} />
-                  <Route path="/admin/login" element={<AdminAuth />} />
-                  <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                  <Route path="/admin/login" element={<AdminAuthProvider><AdminAuth /></AdminAuthProvider>} />
+                  <Route path="/admin" element={<AdminAuthProvider><Admin /></AdminAuthProvider>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />

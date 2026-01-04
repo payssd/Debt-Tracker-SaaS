@@ -5,14 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 import { Eye, EyeOff, Loader2, Shield, Lock, Sparkles } from 'lucide-react';
 import { z } from 'zod';
 
 const authSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  password: z.string().min(4, 'Password must be at least 4 characters'),
 });
 
 const AdminLogo = () => (
@@ -37,30 +36,18 @@ const AdminAuth: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [checkingAdmin, setCheckingAdmin] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const { user, signIn } = useAuth();
+  const { admin, loading: adminLoading, login } = useAdminAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Redirect if already logged in as admin
   useEffect(() => {
-    const checkAdminAndRedirect = async () => {
-      if (user) {
-        setCheckingAdmin(true);
-        try {
-          const { data, error } = await supabase.rpc('is_admin', { p_user_id: user.id });
-          if (!error && data === true) {
-            navigate('/admin', { replace: true });
-          }
-        } catch (err) {
-          console.error('Admin check failed:', err);
-        }
-        setCheckingAdmin(false);
-      }
-    };
-    checkAdminAndRedirect();
-  }, [user, navigate]);
+    if (admin && !adminLoading) {
+      navigate('/admin', { replace: true });
+    }
+  }, [admin, adminLoading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,60 +70,27 @@ const AdminAuth: React.FC = () => {
     
     setLoading(true);
     
-    // First sign in
-    const { data: authData, error: signInError } = await signIn(email, password);
+    const { error } = await login(email, password);
     
-    if (signInError) {
+    if (error) {
       setLoading(false);
       toast({
-        title: 'Sign in failed',
-        description: signInError.message,
+        title: 'Login failed',
+        description: error,
         variant: 'destructive',
       });
       return;
     }
 
-    // Check if user is admin
-    try {
-      const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin', { 
-        p_user_id: authData?.user?.id 
-      });
-
-      if (adminError) {
-        throw adminError;
-      }
-
-      if (!isAdmin) {
-        // Sign out if not admin
-        await supabase.auth.signOut();
-        setLoading(false);
-        toast({
-          title: 'Access Denied',
-          description: 'You do not have admin privileges. Please use the regular login page.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      // User is admin, redirect to admin dashboard
-      toast({
-        title: 'Welcome, Admin!',
-        description: 'You have successfully signed in to the admin portal.',
-      });
-      navigate('/admin', { replace: true });
-    } catch (err: any) {
-      setLoading(false);
-      toast({
-        title: 'Admin verification failed',
-        description: err.message || 'Could not verify admin status. Please try again.',
-        variant: 'destructive',
-      });
-    }
-    
+    toast({
+      title: 'Welcome, Admin!',
+      description: 'You have successfully signed in to the admin portal.',
+    });
+    navigate('/admin', { replace: true });
     setLoading(false);
   };
 
-  if (checkingAdmin) {
+  if (adminLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <Loader2 className="h-8 w-8 animate-spin text-white" />
