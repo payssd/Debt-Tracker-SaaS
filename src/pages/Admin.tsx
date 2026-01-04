@@ -109,11 +109,12 @@ export default function Admin() {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
+    const safeAmount = Number(amount) || 0;
+    const formatted = new Intl.NumberFormat('en-KE', {
       minimumFractionDigits: 0,
-    }).format(amount);
+      maximumFractionDigits: 0,
+    }).format(safeAmount);
+    return `Ksh ${formatted}`;
   };
 
   return (
